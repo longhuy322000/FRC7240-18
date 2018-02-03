@@ -16,17 +16,17 @@ class MyRobot(magicbot.MagicRobot):
 
         self.grabber = DoubleSolenoid(0, 1)
 
-        self.rightFront.setInverted(true);
-		self.rightBack.setInverted(true);
-		self.leftFront.setInverted(true);
-		self.leftBack.setInverted(true);
+        self.rightFront.setInverted(True)
+        self.rightBack.setInverted(True)
+        self.leftFront.setInverted(True)
+        self.leftBack.setInverted(True)
 
         self.gamepad = Joystick(0)
 
-        self.myDrive = RobotDrive(leftFront, leftBack, rightFront, rightBack)
+        self.myDrive = RobotDrive(self.leftFront, self.leftBack, self.rightFront, self.rightBack)
 
     def teleopInit(self):
-
+        pass
 
     def teleopPeriodic(self):
         self.driveTrain.move(self.gamepad.getRawAxis(1), self.gamepad.getRawAxis(5))
