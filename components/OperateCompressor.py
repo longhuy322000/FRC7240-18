@@ -1,5 +1,5 @@
 import wpilib
-from wpilib import RobotDrive, Spark, DoubleSolenoid, Compressor
+from wpilib import DoubleSolenoid, Compressor
 
 class OperateCompressor:
 

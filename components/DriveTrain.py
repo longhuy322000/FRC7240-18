@@ -1,9 +1,9 @@
 import wpilib
-from wpilib import RobotDrive, Spark
+from wpilib import drive, Spark
 
 class DriveTrain:
 
-    myDrive = RobotDrive
+    myDrive = drive.DifferentialDrive
 
     def __init__(self):
         self.powerLeft = 0

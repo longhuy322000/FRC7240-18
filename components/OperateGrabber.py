@@ -1,9 +1,8 @@
 import wpilib
-from wpilib import RobotDrive, Spark, DoubleSolenoid
+from wpilib import DoubleSolenoid
 
 class OperateGrabber:
 
-    myDrive = RobotDrive
     grabber = DoubleSolenoid
 
     def __init__(self):
