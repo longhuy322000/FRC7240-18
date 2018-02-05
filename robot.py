@@ -1,9 +1,11 @@
 import wpilib
-from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, drive, SpeedControllerGroup
-import magicbot
-from components import DriveTrain, OperateGrabber, OperateCompressor
+from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, RobotDrive, SpeedControllerGroup
+from magicbot import MagicRobot
+from components.DriveTrain import DriveTrain
+from components.OperateCompressor import OperateCompressor
+from components.OperateGrabber import OperateGrabber
 
-class MyRobot(magicbot.MagicRobot):
+class MyRobot(MagicRobot):
 
     driveTrain = DriveTrain
     operateGrabber = OperateGrabber
@@ -20,9 +22,7 @@ class MyRobot(magicbot.MagicRobot):
         self.leftFront.setInverted(True)
         self.leftBack.setInverted(True)
 
-        self.m_left = SpeedControllerGroup(self.leftFront, self.leftBack)
-        self.m_right = SpeedControllerGroup(self.rightFront, self.rightBack)
-        self.myDrive = drive.DifferentialDrive(self.m_left, self.m_right)
+        self.myDrive = RobotDrive(self.leftFront, self.leftBack, self.rightFront, self.rightBack)
 
         self.compressor = Compressor()
         self.grabber = DoubleSolenoid(0, 1)
@@ -35,14 +35,14 @@ class MyRobot(magicbot.MagicRobot):
     def teleopPeriodic(self):
         self.driveTrain.move(self.gamepad.getRawAxis(1), self.gamepad.getRawAxis(5))
 
-        if self.gamepad.getRawAxis(1):
+        if self.gamepad.getRawButton(1):
             self.operateGrabber.setGrabber(True, False)
-        if self.gamepad.getRawAxis(2):
+        if self.gamepad.getRawButton(2):
             self.operateGrabber.setGrabber(False, True)
 
-        if self.gamepad.getRawAxis(5):
+        if self.gamepad.getRawButton(5):
             self.operateCompressor.setCompressor(True)
-        if self.gamepad.getRawAxis(6):
+        if self.gamepad.getRawButton(6):
             self.operateCompressor.setCompressor(False)
 
 if __name__ == '__main__':

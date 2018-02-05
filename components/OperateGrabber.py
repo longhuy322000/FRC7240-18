@@ -9,12 +9,12 @@ class OperateGrabber:
         self.openGrabber = False
         self.closeGrabber = False
 
-    def setGrabber(self, openGraber, closeGrabber):
+    def setGrabber(self, openGrabber, closeGrabber):
         self.openGrabber = openGrabber
         self.closeGrabber = closeGrabber
 
     def execute(self):
-        if openGraber and not closeGrabber:
-            grabber.set(DoubleSolenoid.Value.kForward)
+        if self.openGrabber and not self.closeGrabber:
+            self.grabber.set(DoubleSolenoid.Value.kForward)
         else:
-            grabber.set(DoubleSolenoid.Value.kReverse)
+            self.grabber.set(DoubleSolenoid.Value.kReverse)
