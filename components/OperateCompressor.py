@@ -1,5 +1,4 @@
-import wpilib
-from wpilib import DoubleSolenoid, Compressor
+from wpilib import Compressor
 
 class OperateCompressor:
 

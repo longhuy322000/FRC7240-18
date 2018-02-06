@@ -1,7 +1,6 @@
 from cscore import CameraServer
 
 # Import OpenCV and NumPy
-import cv2
 import numpy as np
 
 def main():
@@ -10,7 +9,7 @@ def main():
 
     # Capture from the first USB Camera on the system
     camera = cs.startAutomaticCapture()
-    camera.setResolution(320, 240)
+    camera.setResolution(640, 480)
 
     # Get a CvSink. This will capture images from the camera
     cvSink = cs.getVideo()

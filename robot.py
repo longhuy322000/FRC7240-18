@@ -1,33 +1,34 @@
 import wpilib
-from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, RobotDrive, SpeedControllerGroup, drive
+from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive
 from magicbot import MagicRobot
 from components.DriveTrain import DriveTrain
 from components.OperateCompressor import OperateCompressor
 from components.OperateGrabber import OperateGrabber
 
-#Gamepad axis ports
-AXIS_LEFT_X = 1;
-AXIS_LEFT_Y = 2;
-AXIS_SHOULDER = 3;
-AXIS_RIGHT_X = 4;
-AXIS_RIGHT_Y = 5;
-AXIS_DPAD = 6;
+# Gamepad Axis
+leftStick_X = 0
+leftStick_Y = 1
+shoulderAxisLeft = 2
+shoulderAxisRight = 3
+rightStick_X = 4
+rightStick_Y = 5
+dpadAxis = 6
 
-#Gamepad buttons
-BUTTON_A = 2;
-BUTTON_B = 3;
-BUTTON_X = 1;
-BUTTON_Y = 4;
-BUTTON_SHOULDER_LEFT = 5;
-BUTTON_SHOULDER_RIGHT = 6;
-BUTTON_TRIGGER_LEFT = 7;
-BUTTON_TRIGGER_RIGHT = 8;
-BUTTON_BACK = 9;
-BUTTON_START = 10;
-BUTTON_LEFT_STICK = 11;
-BUTTON_RIGHT_STICK = 12;
-BUTTON_MODE = -1;
-BUTTON_LOGITECH = -1;
+# Gamepad Buttons
+BUTTON_A = 1
+BUTTON_B = 2
+BUTTON_X = 3
+BUTTON_Y = 4
+BUTTON_L_SHOULDER = 5
+BUTTON_R_SHOULDER = 6
+BUTTON_BACK = 7
+BUTTON_START = 8
+BUTTON_LEFTSTICK = 9
+BUTTON_RIGHTSTICK = 10
+
+
+if wpilib.RobotBase.isSimulation():
+    rightStick_Y = 3
 
 class MyRobot(MagicRobot):
 
@@ -55,22 +56,25 @@ class MyRobot(MagicRobot):
 
         self.gamepad = Joystick(0)
 
+        self.gyro = wpilib.ADXRS450_Gyro()
+
         wpilib.CameraServer.launch('vision.py:main')
 
+
     def teleopInit(self):
-        pass
+        self.compressor.start()
 
     def teleopPeriodic(self):
-        self.driveTrain.move(self.gamepad.getRawAxis(AXIS_LEFT_Y), self.gamepad.getRawAxis(AXIS_RIGHT_Y))
+        self.driveTrain.moveAuto(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
 
         if self.gamepad.getRawButton(BUTTON_A):
             self.operateGrabber.setGrabber(True, False)
         if self.gamepad.getRawButton(BUTTON_B):
             self.operateGrabber.setGrabber(False, True)
 
-        if self.gamepad.getRawButton(BUTTON_SHOULDER_LEFT):
+        if self.gamepad.getRawAxis(shoulderAxisLeft):
             self.operateCompressor.setCompressor(True)
-        if self.gamepad.getRawButton(BUTTON_SHOULDER_RIGHT):
+        if self.gamepad.getRawButton(shoulderAxisRight):
             self.operateCompressor.setCompressor(False)
 
 if __name__ == '__main__':
