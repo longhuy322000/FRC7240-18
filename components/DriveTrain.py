@@ -1,5 +1,4 @@
-import wpilib
-from wpilib import RobotDrive, drive
+from wpilib import drive
 
 class DriveTrain:
 

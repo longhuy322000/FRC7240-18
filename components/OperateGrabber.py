@@ -1,4 +1,3 @@
-import wpilib
 from wpilib import DoubleSolenoid
 
 class OperateGrabber:
