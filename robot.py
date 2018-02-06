@@ -56,6 +56,8 @@ class MyRobot(MagicRobot):
 
         self.gamepad = Joystick(0)
 
+        self.gyro = wpilib.ADXRS450_Gyro()
+
         wpilib.CameraServer.launch('vision.py:main')
 
 
