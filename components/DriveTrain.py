@@ -10,16 +10,17 @@ class DriveTrain:
         self.STICK_DEADBAND = 0.005
         self.CENTER = 0.0
 
+    def stickDeadband(self, value):
+        if value < (self.CENTER + self.STICK_DEADBAND) and value > (self.CENTER - self.STICK_DEADBAND):
+            return self.CENTER
+        return value
+
     def moveAuto(self, powerLeft, powerRight):
         self.powerLeft = powerLeft
         self.powerRight = powerRight
 
     def moveTelo(self, powerLeft, powerRight):
-        def stickDeadband(self, value):
-            if value < (self.CENTER + self.STICK_DEADBAND) and value > (self.CENTER - self.STICK_DEADBAND):
-                return value
-            return self.CENTER
-        self.powerLeft = stickDeadband(powerLeft)
+        self.powerLeft = self.stickDeadband(powerLeft)
         self.powerRight = self.stickDeadband(powerRight)
 
     def execute(self):
