@@ -10,4 +10,4 @@ class DriveForward(AutonomousStateMachine):
 
     @timed_state(duration=3, first=True)
     def moveForward(self):
-        self.driveTrain.moveAuto(1, 1)
+        self.driveTrain.moveAuto(-0.5, -0.5)
