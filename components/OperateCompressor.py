@@ -15,4 +15,3 @@ class OperateCompressor:
             self.compressor.start()
         else:
             self.compressor.stop()
-            self.active = False

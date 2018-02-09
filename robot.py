@@ -50,6 +50,7 @@ class MyRobot(MagicRobot):
         self.m_left = SpeedControllerGroup(self.leftFront, self.leftBack)
         self.m_right = SpeedControllerGroup(self.rightFront, self.rightBack)
         self.myDrive = drive.DifferentialDrive(self.m_left, self.m_right)
+        self.myDrive.setSafetyEnabled(False)
 
         self.compressor = Compressor()
         self.grabber = DoubleSolenoid(0, 1)
@@ -62,7 +63,7 @@ class MyRobot(MagicRobot):
         CameraServer.launch('vision.py:main')
 
     def teleopPeriodic(self):
-        self.driveTrain.moveAuto(self.gamepad.getRawAxis(leftStick_Y)*2/3, self.gamepad.getRawAxis(rightStick_Y)*2/3)
+        self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y)*2/3, self.gamepad.getRawAxis(rightStick_Y)*2/3)
 
         if self.gamepad.getRawButton(BUTTON_A):
             self.operateGrabber.setGrabber(True, False)
