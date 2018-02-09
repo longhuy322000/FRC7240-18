@@ -5,7 +5,7 @@ class OperateCompressor:
     compressor = Compressor
 
     def __init__(self):
-        self.active = False
+        self.active = True
 
     def setCompressor(self, active):
         self.active = active
@@ -15,3 +15,4 @@ class OperateCompressor:
             self.compressor.start()
         else:
             self.compressor.stop()
+            self.active = False

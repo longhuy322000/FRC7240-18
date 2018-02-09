@@ -1,5 +1,5 @@
 import wpilib
-from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive
+from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer
 from magicbot import MagicRobot
 from components.DriveTrain import DriveTrain
 from components.OperateCompressor import OperateCompressor
@@ -37,10 +37,10 @@ class MyRobot(MagicRobot):
     operateCompressor = OperateCompressor
 
     def createObjects(self):
-        self.leftFront = Spark(0)
-        self.leftBack = Spark(1)
-        self.rightFront = Spark(2)
-        self.rightBack = Spark(3)
+        self.leftFront = Spark(2)
+        self.leftBack = Spark(3)
+        self.rightFront = Spark(0)
+        self.rightBack = Spark(1)
 
         self.rightFront.setInverted(True)
         self.rightBack.setInverted(True)
@@ -58,23 +58,20 @@ class MyRobot(MagicRobot):
 
         self.gyro = wpilib.ADXRS450_Gyro()
 
-        wpilib.CameraServer.launch('vision.py:main')
-
-
     def teleopInit(self):
-        self.compressor.start()
+        CameraServer.launch('vision.py:main')
 
     def teleopPeriodic(self):
-        self.driveTrain.moveAuto(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
+        self.driveTrain.moveAuto(self.gamepad.getRawAxis(leftStick_Y)*2/3, self.gamepad.getRawAxis(rightStick_Y)*2/3)
 
         if self.gamepad.getRawButton(BUTTON_A):
             self.operateGrabber.setGrabber(True, False)
         if self.gamepad.getRawButton(BUTTON_B):
             self.operateGrabber.setGrabber(False, True)
 
-        if self.gamepad.getRawAxis(shoulderAxisLeft):
+        if self.gamepad.getRawButton(BUTTON_L_SHOULDER):
             self.operateCompressor.setCompressor(True)
-        if self.gamepad.getRawButton(shoulderAxisRight):
+        if self.gamepad.getRawButton(BUTTON_R_SHOULDER):
             self.operateCompressor.setCompressor(False)
 
 if __name__ == '__main__':
