@@ -65,7 +65,7 @@ class MyRobot(MagicRobot):
         CameraServer.launch('vision.py:main')
 
     def teleopPeriodic(self):
-        self.driveTrain.move(self.gamepad.getRawAxis(leftStick_Y)*2/3, self.gamepad.getRawAxis(rightStick_Y)*2/3)
+        self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y)*2/3, self.gamepad.getRawAxis(rightStick_Y)*2/3)
 
         if self.gamepad.getRawButton(BUTTON_A):
             self.operateGrabber.setGrabber(True, False)
