@@ -27,6 +27,8 @@ BUTTON_START = 8
 BUTTON_LEFTSTICK = 9
 BUTTON_RIGHTSTICK = 10
 
+WHEEL_DIAMETER = 5.25
+
 
 if wpilib.RobotBase.isSimulation():
     rightStick_Y = 3
@@ -65,18 +67,21 @@ class MyRobot(MagicRobot):
 
         self.leftEncoder.setMaxPeriod(.1);
         self.leftEncoder.setMinRate(10);
-        self.leftEncoder.setDistancePerPulse((1/4096)*5.25*math.pi);
+        #(1/4096)*WHEEL_DIAMETER*math.pi
+        self.leftEncoder.setDistancePerPulse(1);
         self.leftEncoder.setReverseDirection(True);
         self.leftEncoder.setSamplesToAverage(7);
 
         self.rightEncoder.setMaxPeriod(.1);
         self.rightEncoder.setMinRate(10);
-        self.rightEncoder.setDistancePerPulse((1/4096)*5.25*math.pi);
+        self.rightEncoder.setDistancePerPulse(1);
         self.rightEncoder.setReverseDirection(True);
         self.rightEncoder.setSamplesToAverage(7);
 
-    def teleopInit(self):
         CameraServer.launch('vision.py:main')
+
+    def teleopInit(self):
+        pass
 
     def teleopPeriodic(self):
         self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y)*2/3, self.gamepad.getRawAxis(rightStick_Y)*2/3)

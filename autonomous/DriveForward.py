@@ -15,8 +15,6 @@ class DriveForward(AutonomousStateMachine):
     @timed_state(duration=3, first=True)
     def moveForward(self, initial_call):
         if initial_call:
-            self.leftEncoder.start()
-            self.rightEncoder.start()
             self.angle = self.gyro.getAngle()
         self.driveTrain.moveAngle(1, self.angle)
         print(self.leftEncoder.getDistance(), self.rightEncoder.getDistance())

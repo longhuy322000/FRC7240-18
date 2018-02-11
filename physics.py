@@ -44,7 +44,7 @@ class PhysicsEngine(object):
         self.left_counter = self.left_distance / (self.DIAMETER_WHEEL * math.pi)
         self.right_counter = self.right_distance / (self.DIAMETER_WHEEL * math.pi)
 
-        hal_data['encoder'][0]['counter'] = self.left_counter
-        hal_data['encoder'][1]['counter'] = self.right_counter
+        hal_data['encoder'][0]['count'] = self.left_counter
+        hal_data['encoder'][1]['count'] = self.right_counter
 
-        #print(hal_data['encoder'][0]['samples_to_average'], hal_data['encoder'][1]['samples_to_average'])
+        #print(self.left_counter, self.right_counter)
