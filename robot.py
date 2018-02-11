@@ -1,10 +1,10 @@
 import wpilib
-from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer
+from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer, ADXRS450_Gyro, Encoder
 from magicbot import MagicRobot
 from components.DriveTrain import DriveTrain
 from components.OperateCompressor import OperateCompressor
 from components.OperateGrabber import OperateGrabber
-from components.AutoDrive import AutoDrive
+import math
 
 # Gamepad Axis
 leftStick_X = 0
@@ -36,7 +36,6 @@ class MyRobot(MagicRobot):
     driveTrain = DriveTrain
     operateGrabber = OperateGrabber
     operateCompressor = OperateCompressor
-    autoDrive = AutoDrive
 
     def createObjects(self):
         self.leftFront = Spark(2)
@@ -59,7 +58,22 @@ class MyRobot(MagicRobot):
 
         self.gamepad = Joystick(0)
 
-        self.gyro = wpilib.ADXRS450_Gyro()
+        self.gyro = ADXRS450_Gyro()
+
+        self.leftEncoder = Encoder(0, 1, True, Encoder.EncodingType.k4X)
+        self.rightEncoder = Encoder(2, 3, True, Encoder.EncodingType.k4X)
+
+        self.leftEncoder.setMaxPeriod(.1);
+        self.leftEncoder.setMinRate(10);
+        self.leftEncoder.setDistancePerPulse((1/4096)*5.25*math.pi);
+        self.leftEncoder.setReverseDirection(True);
+        self.leftEncoder.setSamplesToAverage(7);
+
+        self.rightEncoder.setMaxPeriod(.1);
+        self.rightEncoder.setMinRate(10);
+        self.rightEncoder.setDistancePerPulse((1/4096)*5.25*math.pi);
+        self.rightEncoder.setReverseDirection(True);
+        self.rightEncoder.setSamplesToAverage(7);
 
     def teleopInit(self):
         CameraServer.launch('vision.py:main')
