@@ -41,8 +41,8 @@ class PhysicsEngine(object):
         self.physics_controller.drive(speed, rotation, tm_diff)
         self.left_distance += (12 * leftSpeed * tm_diff)
         self.right_distance += (12 * rightSpeed * tm_diff)
-        self.left_counter = self.left_distance / (self.DIAMETER_WHEEL * math.pi / 360)
-        self.right_counter = self.right_distance / (self.DIAMETER_WHEEL * math.pi / 360)
+        self.left_counter = self.left_distance / (self.DIAMETER_WHEEL * math.pi)
+        self.right_counter = self.right_distance / (self.DIAMETER_WHEEL * math.pi)
 
         hal_data['encoder'][0]['counter'] = self.left_counter
         hal_data['encoder'][1]['counter'] = self.right_counter
