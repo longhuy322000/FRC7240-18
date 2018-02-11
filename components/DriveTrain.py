@@ -1,4 +1,4 @@
-from wpilib import drive, ADXRS450_Gyro
+from wpilib import drive, ADXRS450_Gyro, Encoder
 from magicbot import tunable
 
 class DriveTrain:
@@ -6,7 +6,14 @@ class DriveTrain:
     myDrive = drive.DifferentialDrive
     kP = tunable(0.1)
     gyro = ADXRS450_Gyro
+    leftEncoder = Encoder
+    rightEncoder = Encoder
 
+    leftEncoderset(.1);
+    sampleEncoder->SetMinRate(10);
+    sampleEncoder->SetDistancePerPulse(5);
+    sampleEncoder->SetReverseDirection(true);
+    sampleEncoder->SetSamplesToAverage(7);
     def __init__(self):
         self.powerLeft = 0
         self.powerRight = 0

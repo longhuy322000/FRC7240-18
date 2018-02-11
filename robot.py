@@ -1,5 +1,5 @@
 import wpilib
-from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer
+from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer, ADXRS450_Gyro, Encoder
 from magicbot import MagicRobot
 from components.DriveTrain import DriveTrain
 from components.OperateCompressor import OperateCompressor
@@ -57,7 +57,10 @@ class MyRobot(MagicRobot):
 
         self.gamepad = Joystick(0)
 
-        self.gyro = wpilib.ADXRS450_Gyro()
+        self.gyro = ADXRS450_Gyro()
+
+        self.leftEncoder = Encoder(0, 1, True, Encoder.EncodingType.k4X)
+        self.rightEncoder = Encoder(2, 3, True, Encoder.EncodingType.k4X)
 
     def teleopInit(self):
         CameraServer.launch('vision.py:main')
