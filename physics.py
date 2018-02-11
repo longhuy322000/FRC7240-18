@@ -47,4 +47,4 @@ class PhysicsEngine(object):
         hal_data['encoder'][0]['counter'] = self.left_counter
         hal_data['encoder'][1]['counter'] = self.right_counter
 
-        #print(hal_data['encoder'][0]['distance_per_pulse'], hal_data['encoder'][1]['distance_per_pulse'])
+        #print(hal_data['encoder'][0]['samples_to_average'], hal_data['encoder'][1]['samples_to_average'])
