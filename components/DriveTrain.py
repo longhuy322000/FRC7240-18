@@ -15,11 +15,7 @@ class DriveTrain:
             return self.CENTER
         return value
 
-    def moveAuto(self, powerLeft, powerRight):
-        self.powerLeft = powerLeft
-        self.powerRight = powerRight
-
-    def moveTelo(self, powerLeft, powerRight):
+    def move(self, powerLeft, powerRight):
         self.powerLeft = self.stickDeadband(powerLeft)
         self.powerRight = self.stickDeadband(powerRight)
 
