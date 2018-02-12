@@ -15,10 +15,8 @@ class DriveTrain:
         self.power = 0
         self.STICK_DEADBAND = 0.005
         self.CENTER = 0.0
-        self.option = 0
+        self.option = -1
         self.angle = 0
-        self.distance = 0
-        self.initial_run = False
 
     def stickDeadband(self, value):
         if value < (self.CENTER + self.STICK_DEADBAND) and value > (self.CENTER - self.STICK_DEADBAND):
@@ -28,31 +26,24 @@ class DriveTrain:
     def moveAngle(self, power, angle):
         self.power = -power
         self.angle = self.kP * (self.gyro.getAngle() - angle)
-        self.option = 1
+        self.option = False
 
     def moveAuto(self, power, angle):
         self.power = -power
         self.angle = angle
-        self.option = 1
-
-    def moveDistance(self, power, angle, distance):
-        self.power = -power
-        self.angle = angle
-        self.distance = distance
-        self.option = 2
+        self.option = False
 
     def moveTank(self, powerLeft, powerRight):
         self.powerLeft = self.stickDeadband(powerLeft)
         self.powerRight = self.stickDeadband(powerRight)
-        self.option = 3
+        self.option = True
 
     def execute(self):
-        if self.option == 3:
-            self.myDrive.tankDrive(self.powerLeft, self.powerRight)
-        elif self.option == 2:
-            while self.leftEncoder.getDistance() < self.distance:
-                self.myDrive.arcadeDrive(self.power, self.angle)
-        else:
+        if not self.option:
             self.myDrive.arcadeDrive(self.power, self.angle)
+        else:
+            self.myDrive.tankDrive(self.powerLeft, self.powerRight)
         self.power = 0
+        self.powerLeft = 0
+        self.powerRight = 0
         self.angle = 0

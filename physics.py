@@ -39,6 +39,9 @@ class PhysicsEngine(object):
         #if abs(speed) > 0:
         #    rotation -= 0.3
         self.physics_controller.drive(speed, rotation, tm_diff)
+        if leftSpeed == 0 and rightSpeed == 0:
+            self.left_distance = 0
+            self.right_distance = 0
         self.left_distance += (12 * leftSpeed * tm_diff)
         self.right_distance += (12 * rightSpeed * tm_diff)
         self.left_counter = self.left_distance / (self.DIAMETER_WHEEL * math.pi)
@@ -46,5 +49,7 @@ class PhysicsEngine(object):
 
         hal_data['encoder'][0]['count'] = self.left_counter
         hal_data['encoder'][1]['count'] = self.right_counter
+
+        print(hal_data['encoder'][0]['count'])
 
         #print(self.left_counter, self.right_counter)
