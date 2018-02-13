@@ -44,12 +44,10 @@ class PhysicsEngine(object):
             self.right_distance = 0
         self.left_distance += (12 * leftSpeed * tm_diff)
         self.right_distance += (12 * rightSpeed * tm_diff)
-        self.left_counter = self.left_distance / (self.DIAMETER_WHEEL * math.pi)
-        self.right_counter = self.right_distance / (self.DIAMETER_WHEEL * math.pi)
+        self.left_counter = self.left_distance / (self.DIAMETER_WHEEL * math.pi / 360)
+        self.right_counter = self.right_distance / (self.DIAMETER_WHEEL * math.pi / 360)
 
         hal_data['encoder'][0]['count'] = self.left_counter
         hal_data['encoder'][1]['count'] = self.right_counter
-
-        print(hal_data['encoder'][0]['count'])
 
         #print(self.left_counter, self.right_counter)

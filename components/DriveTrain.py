@@ -23,6 +23,11 @@ class DriveTrain:
             return self.CENTER
         return value
 
+    def stopMotor(self):
+        self.power = 0
+        self.angle = 0
+        self.option = False
+
     def moveAngle(self, power, angle):
         self.power = -power
         self.angle = self.kP * (self.gyro.getAngle() - angle)
@@ -33,6 +38,11 @@ class DriveTrain:
         self.angle = angle
         self.option = False
 
+    '''def movePathFinder(self, powerLeft, powerRight):
+        self.powerLeft = powerLeft
+        self.powerRight = powerRight
+        self.option = True'''
+
     def moveTank(self, powerLeft, powerRight):
         self.powerLeft = self.stickDeadband(powerLeft)
         self.powerRight = self.stickDeadband(powerRight)
@@ -42,6 +52,7 @@ class DriveTrain:
         if not self.option:
             self.myDrive.arcadeDrive(self.power, self.angle)
         else:
+            print(self.powerLeft, self.powerRight)
             self.myDrive.tankDrive(self.powerLeft, self.powerRight)
         self.power = 0
         self.powerLeft = 0

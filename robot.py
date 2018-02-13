@@ -68,13 +68,13 @@ class MyRobot(MagicRobot):
         self.leftEncoder.setMaxPeriod(.1);
         self.leftEncoder.setMinRate(10);
         #(1/4096)*WHEEL_DIAMETER*math.pi
-        self.leftEncoder.setDistancePerPulse(1);
+        self.leftEncoder.setDistancePerPulse((1/4096)*WHEEL_DIAMETER*math.pi);
         self.leftEncoder.setReverseDirection(True);
         self.leftEncoder.setSamplesToAverage(7);
 
         self.rightEncoder.setMaxPeriod(.1);
         self.rightEncoder.setMinRate(10);
-        self.rightEncoder.setDistancePerPulse(1);
+        self.rightEncoder.setDistancePerPulse((1/4096)*WHEEL_DIAMETER*math.pi);
         self.rightEncoder.setReverseDirection(True);
         self.rightEncoder.setSamplesToAverage(7);
 
