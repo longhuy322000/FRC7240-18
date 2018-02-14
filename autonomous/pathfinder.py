@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from magicbot import AutonomousStateMachine, state
 from components.DriveTrain import DriveTrain
 from wpilib import ADXRS450_Gyro, Encoder
