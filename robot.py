@@ -5,6 +5,7 @@ from components.DriveTrain import DriveTrain
 from components.OperateCompressor import OperateCompressor
 from components.OperateGrabber import OperateGrabber
 import math
+import RobotMap
 
 # Gamepad Axis
 leftStick_X = 0
@@ -27,15 +28,10 @@ BUTTON_START = 8
 BUTTON_LEFTSTICK = 9
 BUTTON_RIGHTSTICK = 10
 
-WHEEL_DIAMETER = 0.5
-
-
 if wpilib.RobotBase.isSimulation():
     rightStick_Y = 3
 
 class MyRobot(MagicRobot):
-
-    WHEEL_DIAMETER = 0.5
 
     driveTrain = DriveTrain
     operateGrabber = OperateGrabber
@@ -67,10 +63,8 @@ class MyRobot(MagicRobot):
         self.leftEncoder = Encoder(0, 1, True, Encoder.EncodingType.k4X)
         self.rightEncoder = Encoder(2, 3, True, Encoder.EncodingType.k4X)
 
-        self.leftEncoder.setReverseDirection(True)
-        self.rightEncoder.setReverseDirection(True)
-        self.leftEncoder.setDistancePerPulse((1/360.0)*WHEEL_DIAMETER*math.pi)
-        self.rightEncoder.setDistancePerPulse((1/360.0)*WHEEL_DIAMETER*math.pi)
+        self.leftEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)
+        self.rightEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)
 
         CameraServer.launch('vision.py:main')
 

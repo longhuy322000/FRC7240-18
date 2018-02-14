@@ -1,5 +1,6 @@
 from pyfrc.physics import drivetrains
 import math
+import RobotMap
 
 class PhysicsEngine(object):
     '''
@@ -17,7 +18,7 @@ class PhysicsEngine(object):
         self.physics_controller.add_device_gyro_channel('adxrs450_spi_0_angle')
         self.left_distance = 0
         self.right_distance = 0
-        self.DIAMETER_WHEEL = 0.5
+        self.WHEEL_DIAMETER = 0.5
 
     def update_sim(self, hal_data, now, tm_diff):
         '''
@@ -44,8 +45,8 @@ class PhysicsEngine(object):
             self.right_distance = 0
         self.left_distance += (leftSpeed * tm_diff)
         self.right_distance += (rightSpeed * tm_diff)
-        self.left_counter = self.left_distance / (self.DIAMETER_WHEEL * math.pi / 360)
-        self.right_counter = self.right_distance / (self.DIAMETER_WHEEL * math.pi / 360)
+        self.left_counter = self.left_distance / (RobotMap.WHEEL_DIAMETER * math.pi / 360)
+        self.right_counter = self.right_distance / (RobotMap.WHEEL_DIAMETER * math.pi / 360)
 
         hal_data['encoder'][0]['count'] = int(self.left_counter)
         hal_data['encoder'][1]['count'] = int(self.right_counter)
