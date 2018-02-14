@@ -1,6 +1,6 @@
-from magicbot import AutonomousStateMachine, timed_state
+from magicbot import AutonomousStateMachine, state
 from components.DriveTrain import DriveTrain
-from wpilib import ADXRS450_Gyro
+from wpilib import ADXRS450_Gyro, Encoder
 
 class MiddleLocation(AutonomousStateMachine):
 
@@ -9,11 +9,24 @@ class MiddleLocation(AutonomousStateMachine):
 
     driveTrain = DriveTrain
     gyro = ADXRS450_Gyro
+    leftEncoder = Encoder
+    rightEncoder = Encoder
 
-    @timed_state(duration=1.5, first=True, next_state='turnRight')
-    def turnLeft(self):
-        self.driveTrain.moveAuto(0, -0.5)
+    action = {'1': False, '2': False}
 
-    @timed_state(duration=1.5)
-    def turnRight(self):
-        self.driveTrain.moveAuto(0, 0.5)
+    @state(first=True)
+    def moveForward(self, initial_call):
+        if not self.action['1']:
+            if self.leftEncoder.getDistance() < 12:
+                self.driveTrain.moveAuto(1, 0)
+            else:
+                self.action['1'] = True
+                self.driveTrain.moveAuto(0, 0)
+        elif not self.action['2']:
+            #print(self.leftEncoder.getDistance())
+            if abs(self.leftEncoder.getDistance()) < 6:
+                self.driveTrain.moveAuto(-1, 0)
+            else:
+                self.action['2'] = True
+                self.leftEncoder.reset()
+                self.rightEncoder.reset()

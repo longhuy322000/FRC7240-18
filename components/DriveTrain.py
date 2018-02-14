@@ -1,4 +1,4 @@
-from wpilib import drive, ADXRS450_Gyro
+from wpilib import drive, ADXRS450_Gyro, Encoder
 from magicbot import tunable
 
 class DriveTrain:
@@ -6,6 +6,8 @@ class DriveTrain:
     myDrive = drive.DifferentialDrive
     kP = tunable(0.1)
     gyro = ADXRS450_Gyro
+    leftEncoder = Encoder
+    rightEncoder = Encoder
 
     def __init__(self):
         self.powerLeft = 0
@@ -13,7 +15,7 @@ class DriveTrain:
         self.power = 0
         self.STICK_DEADBAND = 0.005
         self.CENTER = 0.0
-        self.option = False
+        self.option = -1
         self.angle = 0
 
     def stickDeadband(self, value):
@@ -37,11 +39,11 @@ class DriveTrain:
         self.option = True
 
     def execute(self):
-        if self.option:
-            self.myDrive.tankDrive(self.powerLeft, self.powerRight)
-            self.power = 0
-            self.angle = 0
-        else:
+        if not self.option:
             self.myDrive.arcadeDrive(self.power, self.angle)
-            self.power = 0
-            self.angle = 0
+        else:
+            self.myDrive.tankDrive(self.powerLeft, self.powerRight)
+        self.power = 0
+        self.powerLeft = 0
+        self.powerRight = 0
+        self.angle = 0

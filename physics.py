@@ -17,7 +17,7 @@ class PhysicsEngine(object):
         self.physics_controller.add_device_gyro_channel('adxrs450_spi_0_angle')
         self.left_distance = 0
         self.right_distance = 0
-        self.DIAMETER_WHEEL = 0.4375
+        self.DIAMETER_WHEEL = 5.25
 
     def update_sim(self, hal_data, now, tm_diff):
         '''
@@ -39,12 +39,17 @@ class PhysicsEngine(object):
         #if abs(speed) > 0:
         #    rotation -= 0.3
         self.physics_controller.drive(speed, rotation, tm_diff)
-        self.left_distance += abs(leftSpeed * tm_diff)
-        self.right_distance += abs(rightSpeed * tm_diff)
+        if leftSpeed == 0 and rightSpeed == 0:
+            self.left_distance = 0
+            self.right_distance = 0
+        self.left_distance += (12 * leftSpeed * tm_diff)
+        self.right_distance += (12 * rightSpeed * tm_diff)
         self.left_counter = self.left_distance / (self.DIAMETER_WHEEL * math.pi)
         self.right_counter = self.right_distance / (self.DIAMETER_WHEEL * math.pi)
 
-        hal_data['encoder'][0]['counter'] = self.left_counter
-        hal_data['encoder'][1]['counter'] = self.right_counter
+        hal_data['encoder'][0]['count'] = self.left_counter
+        hal_data['encoder'][1]['count'] = self.right_counter
 
-        print(leftSpeed, rightSpeed)
+        print(hal_data['encoder'][0]['count'])
+
+        #print(self.left_counter, self.right_counter)

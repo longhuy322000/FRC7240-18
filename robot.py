@@ -1,5 +1,5 @@
 import wpilib
-from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer
+from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer, ADXRS450_Gyro, Encoder
 from magicbot import MagicRobot
 from components.DriveTrain import DriveTrain
 from components.OperateCompressor import OperateCompressor
@@ -25,6 +25,8 @@ BUTTON_BACK = 7
 BUTTON_START = 8
 BUTTON_LEFTSTICK = 9
 BUTTON_RIGHTSTICK = 10
+
+WHEEL_DIAMETER = 5.25
 
 
 if wpilib.RobotBase.isSimulation():
@@ -57,13 +59,31 @@ class MyRobot(MagicRobot):
 
         self.gamepad = Joystick(0)
 
-        self.gyro = wpilib.ADXRS450_Gyro()
+        self.gyro = ADXRS450_Gyro()
 
-    def teleopInit(self):
+        self.leftEncoder = Encoder(0, 1, True, Encoder.EncodingType.k4X)
+        self.rightEncoder = Encoder(2, 3, True, Encoder.EncodingType.k4X)
+
+        self.leftEncoder.setMaxPeriod(.1);
+        self.leftEncoder.setMinRate(10);
+        #(1/4096)*WHEEL_DIAMETER*math.pi
+        self.leftEncoder.setDistancePerPulse(1);
+        self.leftEncoder.setReverseDirection(True);
+        self.leftEncoder.setSamplesToAverage(7);
+
+        self.rightEncoder.setMaxPeriod(.1);
+        self.rightEncoder.setMinRate(10);
+        self.rightEncoder.setDistancePerPulse(1);
+        self.rightEncoder.setReverseDirection(True);
+        self.rightEncoder.setSamplesToAverage(7);
+
         CameraServer.launch('vision.py:main')
 
+    def teleopInit(self):
+        pass
+
     def teleopPeriodic(self):
-        self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y)*2/3, self.gamepad.getRawAxis(rightStick_Y)*2/3)
+        self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
 
         if self.gamepad.getRawButton(BUTTON_A):
             self.operateGrabber.setGrabber(True, False)
