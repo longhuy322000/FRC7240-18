@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 from magicbot import AutonomousStateMachine, state
 from components.DriveTrain import DriveTrain
