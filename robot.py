@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import wpilib
 from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer, ADXRS450_Gyro, Encoder
 from magicbot import MagicRobot

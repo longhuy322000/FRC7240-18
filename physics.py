@@ -40,9 +40,6 @@ class PhysicsEngine(object):
         #if abs(speed) > 0:
         #    rotation -= 0.3
         self.physics_controller.drive(speed, rotation, tm_diff)
-        if leftSpeed == 0 and rightSpeed == 0:
-            self.left_distance = 0
-            self.right_distance = 0
         self.left_distance += (leftSpeed * tm_diff)
         self.right_distance += (rightSpeed * tm_diff)
         self.left_counter = self.left_distance / (RobotMap.WHEEL_DIAMETER * math.pi / 360)
