@@ -19,7 +19,7 @@ class PathFinder(AutonomousStateMachine):
         super().on_enable()
         points = [
             pf.Waypoint(0, 0, pf.d2r(0)),
-            pf.Waypoint(-5, 4, 0)
+            pf.Waypoint(5, -4, pf.d2r(90))
         ]
 
         info, trajectory = pf.generate(points, pf.FIT_HERMITE_CUBIC,
@@ -42,6 +42,8 @@ class PathFinder(AutonomousStateMachine):
         self.left.configurePIDVA(RobotMap.kp, RobotMap.ki, RobotMap.kd, RobotMap.kv, RobotMap.ka)
         self.right.configurePIDVA(RobotMap.kp, RobotMap.ki, RobotMap.kd, RobotMap.kv, RobotMap.ka)
 
+        RobotMap.angle_error = 0.0
+
         self.left.reset()
         self.right.reset()
 
@@ -50,10 +52,16 @@ class PathFinder(AutonomousStateMachine):
         powerLeft = self.left.calculate(self.leftEncoder.get())
         powerRight = self.right.calculate(self.rightEncoder.get())
 
-        gyro_heading = self.gyro.getAngle()
-        desired_heading = pf.d2r(self.left.getHeading())
+        gyro_heading = -self.gyro.getAngle()
+        desired_heading = pf.r2d(-self.left.getHeading())
         angleDifference = pf.boundHalfDegrees(desired_heading - gyro_heading)
         turn = 0.8 * (-1.0/80.0) * angleDifference
+        #turn = turn = RobotMap.gp * angleDifference + (RobotMap.gd *
+                #((angleDifference - RobotMap.angle_error) / RobotMap.dt));
+        print(desired_heading , gyro_heading, angleDifference, turn)
 
-        print(powerLeft, powerRight)
-        self.driveTrain.movePathFinder(powerLeft, powerRight)
+        RobotMap.angle_error = angleDifference
+
+        #print(powerLeft, powerRight)
+        self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
+        #self.driveTrain.movePathFinder(-powerLeft, -powerRight)

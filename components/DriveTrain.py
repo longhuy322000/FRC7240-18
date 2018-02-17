@@ -4,6 +4,7 @@ from magicbot import tunable
 class DriveTrain:
 
     myDrive = drive.DifferentialDrive
+    #reverseMyDrive = drive.DifferentialDrive
     kP = tunable(0.1)
     gyro = ADXRS450_Gyro
     leftEncoder = Encoder
