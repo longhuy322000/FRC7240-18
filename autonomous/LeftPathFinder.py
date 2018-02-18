@@ -19,9 +19,8 @@ class PathFinder(AutonomousStateMachine):
         super().on_enable()
         points = [
             pf.Waypoint(0, 0, pf.d2r(0)),
-            pf.Waypoint(7, -8.5, pf.d2r(0)),
-            pf.Waypoint(10.5, -7, pf.d2r(90)),
-            #pf.Waypoint(8.5, -7, pf.d2r(60))
+            pf.Waypoint(9, 3, pf.d2r(0))
+            #pf.Waypoint(10.5, 0.75, pf.d2r(90))
         ]
 
         info, trajectory = pf.generate(points, pf.FIT_HERMITE_CUBIC,
