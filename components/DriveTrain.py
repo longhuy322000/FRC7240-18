@@ -4,6 +4,7 @@ from magicbot import tunable
 class DriveTrain:
 
     myDrive = drive.DifferentialDrive
+    #reverseMyDrive = drive.DifferentialDrive
     kP = tunable(0.1)
     gyro = ADXRS450_Gyro
     leftEncoder = Encoder
@@ -52,7 +53,6 @@ class DriveTrain:
         if not self.option:
             self.myDrive.arcadeDrive(self.power, self.angle)
         else:
-            print(self.leftEncoder.get(), self.rightEncoder.get())
             self.myDrive.tankDrive(self.powerLeft, self.powerRight)
         self.power = 0
         self.powerLeft = 0

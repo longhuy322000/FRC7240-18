@@ -44,7 +44,6 @@ class MyRobot(MagicRobot):
         self.leftBack = Spark(3)
         self.rightFront = Spark(0)
         self.rightBack = Spark(1)
-
         self.rightFront.setInverted(True)
         self.rightBack.setInverted(True)
         self.leftFront.setInverted(True)
@@ -55,6 +54,16 @@ class MyRobot(MagicRobot):
         self.myDrive = drive.DifferentialDrive(self.m_left, self.m_right)
         self.myDrive.setSafetyEnabled(False)
 
+        '''self.reverseLeftFront = Spark(2)
+        self.reverseLeftBack = Spark(3)
+        self.reverseRightFront = Spark(0)
+        self.reverseRightBack = Spark(1)
+
+        self.reverse_m_left = SpeedControllerGroup(self.reverserightFront, self.reverseRightBack)
+        self.reverse_m_right = SpeedControllerGroup(self.reverseLeftFront, self.reverseLeftBack)
+        self.reverseMyDrive = drive.DifferentialDrive(self.reverse_m_left, self.reverse_m_right)
+        self.reverseMyDrive.setSafetyEnabled(False)'''
+
         self.compressor = Compressor()
         self.grabber = DoubleSolenoid(0, 1)
 
@@ -62,8 +71,8 @@ class MyRobot(MagicRobot):
 
         self.gyro = ADXRS450_Gyro()
 
-        self.leftEncoder = Encoder(0, 1, True, Encoder.EncodingType.k4X)
-        self.rightEncoder = Encoder(2, 3, True, Encoder.EncodingType.k4X)
+        self.leftEncoder = Encoder(0, 1, False, Encoder.EncodingType.k4X)
+        self.rightEncoder = Encoder(2, 3, False, Encoder.EncodingType.k4X)
 
         self.leftEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)
         self.rightEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)

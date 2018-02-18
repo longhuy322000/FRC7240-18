@@ -4,7 +4,7 @@ from wpilib import ADXRS450_Gyro
 
 class RightLocation(AutonomousStateMachine):
 
-    MODE_NAME = "Right Location"
+    MODE_NAME = "Right PathFinder"
     DEFAULT = False
 
     driveTrain = DriveTrain

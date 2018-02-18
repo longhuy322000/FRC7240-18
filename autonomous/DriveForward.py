@@ -5,7 +5,7 @@ from wpilib import ADXRS450_Gyro, Encoder, Compressor
 class DriveForward(AutonomousStateMachine):
 
     MODE_NAME = "Drive Forward"
-    DEFAULT = True
+    DEFAULT = False
 
     driveTrain = DriveTrain
     gyro = ADXRS450_Gyro
