@@ -52,6 +52,7 @@ class DriveTrain:
         if not self.option:
             self.myDrive.arcadeDrive(self.power, self.angle)
         else:
+            print(self.leftEncoder.get(), self.rightEncoder.get())
             self.myDrive.tankDrive(self.powerLeft, self.powerRight)
         self.power = 0
         self.powerLeft = 0

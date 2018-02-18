@@ -18,8 +18,8 @@ class PathFinder(AutonomousStateMachine):
     def on_enable(self):
         super().on_enable()
         points = [
-            pf.Waypoint(0, 0, pf.d2r(0)),
-            pf.Waypoint(-5, 4, 0)
+            pf.Waypoint(0, 0, pf.d2r(180)),
+            pf.Waypoint(5, 5, pf.d2r(45))
         ]
 
         info, trajectory = pf.generate(points, pf.FIT_HERMITE_CUBIC,
@@ -47,8 +47,8 @@ class PathFinder(AutonomousStateMachine):
 
     @state(first=True)
     def pathFinder(self, initial_call):
-        powerLeft = self.left.calculate(self.leftEncoder.get())
-        powerRight = self.right.calculate(self.rightEncoder.get())
+        powerLeft = self.left.calculate(-self.leftEncoder.get())
+        powerRight = self.right.calculate(-self.rightEncoder.get())
 
         gyro_heading = self.gyro.getAngle()
         desired_heading = pf.d2r(self.left.getHeading())
@@ -56,4 +56,4 @@ class PathFinder(AutonomousStateMachine):
         turn = 0.8 * (-1.0/80.0) * angleDifference
 
         print(powerLeft, powerRight)
-        self.driveTrain.movePathFinder(powerLeft, powerRight)
+        self.driveTrain.movePathFinder(-powerLeft, -powerRight)
