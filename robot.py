@@ -6,6 +6,7 @@ from magicbot import MagicRobot
 from components.DriveTrain import DriveTrain
 from components.OperateCompressor import OperateCompressor
 from components.OperateGrabber import OperateGrabber
+from components.PathFinder import PathFinder
 import math
 import RobotMap
 
@@ -35,6 +36,7 @@ if wpilib.RobotBase.isSimulation():
 
 class MyRobot(MagicRobot):
 
+    pathFinder = PathFinder
     driveTrain = DriveTrain
     operateGrabber = OperateGrabber
     operateCompressor = OperateCompressor

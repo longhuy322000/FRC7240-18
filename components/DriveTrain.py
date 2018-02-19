@@ -1,11 +1,18 @@
 from wpilib import drive, ADXRS450_Gyro, Encoder
 from magicbot import tunable
 
+import wpilib
+if wpilib.RobotBase.isSimulation():
+    print("I IN SIM")
+else:
+    print("I IS REAL")
+
 class DriveTrain:
 
     myDrive = drive.DifferentialDrive
     #reverseMyDrive = drive.DifferentialDrive
-    kP = tunable(0.1)
+    leftValue = tunable(0)
+    rightValue = tunable(0)
     gyro = ADXRS450_Gyro
     leftEncoder = Encoder
     rightEncoder = Encoder
@@ -53,6 +60,8 @@ class DriveTrain:
         if not self.option:
             self.myDrive.arcadeDrive(self.power, self.angle)
         else:
+            self.leftValue = self.leftEncoder.get()
+            self.rightValue = self.rightEncoder.get()
             self.myDrive.tankDrive(self.powerLeft, self.powerRight)
         self.power = 0
         self.powerLeft = 0

@@ -1,5 +1,5 @@
 WHEEL_DIAMETER = 0.5
-Width_Base = 2
+Width_Base = 1.75
 
 #PathFinder generate
 dt = 0.02
