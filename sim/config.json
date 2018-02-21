@@ -9,12 +9,6 @@
                 {"x": 3.75, "y": 15, "angle": 0, "name": "middle"},
                 {"x": 3.75, "y": 7.5, "angle": 0, "name": "left"}
           ]
-        },
-
-        "field": {
-            "w": 27,
-            "h": 27,
-            "px_per_ft": 17
         }
     }
 }

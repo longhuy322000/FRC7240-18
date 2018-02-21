@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import wpilib
-from wpilib import Spark, Joystick, DoubleSolenoid, Solenoid, Compressor, SpeedControllerGroup, drive, CameraServer, ADXRS450_Gyro, Encoder
+from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer, ADXRS450_Gyro, Encoder
 from magicbot import MagicRobot
 from components.DriveTrain import DriveTrain
 from components.OperateCompressor import OperateCompressor
@@ -74,6 +74,10 @@ class MyRobot(MagicRobot):
         self.rightEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)
 
         CameraServer.launch('vision.py:main')
+
+    def autonomous(self):
+        self.gyro.reset()
+        super().autonomous()
 
     def teleopInit(self):
         pass

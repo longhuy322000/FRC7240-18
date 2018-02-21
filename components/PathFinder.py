@@ -21,13 +21,18 @@ points = {
         pf.Waypoint(12.25, -7.65, pf.d2r(90))
     ],
 
-    'Left': [
+    'LeftSwitchLeft': [
         pf.Waypoint(0, 0, pf.d2r(0)),
         pf.Waypoint(10, 3, pf.d2r(0)),
         pf.Waypoint(11.5, -0.8, pf.d2r(90))
     ],
 
-    'Right': [
+    'LeftScaleLeft': [
+        pf.Waypoint(11.5, -0.8, pf.d2r(90)),
+        pf.Waypoint(11.5, 3, pf.d2r(90))
+    ],
+
+    'RightSwitch': [
         pf.Waypoint(0, 0, pf.d2r(0)),
         pf.Waypoint(10, -3, pf.d2r(0)),
         pf.Waypoint(11.5, 0.8, pf.d2r(90))
@@ -68,21 +73,29 @@ class PathFinder:
     max_acceleration = tunable(RobotMap.max_acceleration)
     max_jerk = tunable(RobotMap.max_jerk)
 
+    active = tunable(0)
+
     def __init__(self):
         self.points = []
-        self.check = False
         self.angle_error = 0.0
         self.running = False
+        self.reverse = False
 
-    def setTrajectory(self, location):
+    def setTrajectory(self, location, reverse):
+        self.reverse = reverse
+        self.running = True
+        self.angle_error = 0.0
+
         if location == 'middleright':
             modifier = pf.modifiers.TankModifier(points['MiddleRight']).modify(RobotMap.Width_Base)
         elif location == 'middleleft':
             modifier = pf.modifiers.TankModifier(points['MiddleLeft']).modify(RobotMap.Width_Base)
-        elif location == 'left':
-            modifier = pf.modifiers.TankModifier(points['Left']).modify(RobotMap.Width_Base)
+        elif location == 'LeftSwitchLeft':
+            modifier = pf.modifiers.TankModifier(points['LeftSwitchLeft']).modify(RobotMap.Width_Base)
+        elif location == 'LeftScaleLeft':
+            modifier = pf.modifiers.TankModifier(points['LeftScaleLeft']).modify(RobotMap.Width_Base)
         elif location == 'right':
-            modifier = pf.modifiers.TankModifier(points['Right']).modify(RobotMap.Width_Base)
+            modifier = pf.modifiers.TankModifier(points['RightSwitch']).modify(RobotMap.Width_Base)
 
         leftTrajectory = modifier.getLeftTrajectory()
         rightTrajectory = modifier.getRightTrajectory()
@@ -90,37 +103,52 @@ class PathFinder:
         self.left = EncoderFollower(leftTrajectory)
         self.right = EncoderFollower(rightTrajectory)
 
-        self.left.configureEncoder(self.leftEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
-        self.right.configureEncoder(self.rightEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
+        self.left.reset()
+        self.right.reset()
+
+        if self.reverse:
+            self.left.configureEncoder(-self.leftEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
+            self.right.configureEncoder(-self.rightEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
+        else:
+            self.left.configureEncoder(self.leftEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
+            self.right.configureEncoder(self.rightEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
         self.left.configurePIDVA(self.kp, self.ki, self.kd, self.kv, self.ka)
         self.right.configurePIDVA(self.kp, self.ki, self.kd, self.kv, self.ka)
 
-        self.left.reset()
-        self.right.reset()
-        self.gyro.reset()
-
-        self.running = True
-
     def execute(self):
+        self.active = self.running
+        #current_gp = self.kp
+
         if not self.running:
             return
 
-        powerLeft = self.left.calculate(self.leftEncoder.get())
-        powerRight = self.right.calculate(self.rightEncoder.get())
+        if self.reverse:
+            powerLeft = self.left.calculate(-self.leftEncoder.get())
+            powerRight = self.right.calculate(-self.rightEncoder.get())
+            gyro_heading = self.gyro.getAngle()
+        else:
+            powerLeft = self.left.calculate(self.leftEncoder.get())
+            powerRight = self.right.calculate(self.rightEncoder.get())
+            gyro_heading = -self.gyro.getAngle()
 
-        gyro_heading = -self.gyro.getAngle()
         desired_heading = pf.r2d(self.left.getHeading())
+
         angleDifference = pf.boundHalfDegrees(desired_heading - gyro_heading)
         #turn = 0.8 * (-1.0/80.0) * angleDifference
-        turn = turn = self.gp * angleDifference + (self.gd *
+        turn = turn = self.kp * angleDifference + (self.gd *
                 ((angleDifference - self.angle_error) / self.dt));
         self.angle_error = angleDifference
 
-        self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
+        if self.reverse:
+            self.driveTrain.movePathFinder(powerLeft+turn, powerRight-turn)
+        else:
+            self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
+
         if self.left.isFinished() or self.right.isFinished():
-            self.operateArm.setArm(False)
-            self.operateGrabber.setGrabber(False)
-            self.running = True
+            self.running = False
+
+        print(desired_heading, gyro_heading)
+
 
     def on_disable(self):
         self.running = False
