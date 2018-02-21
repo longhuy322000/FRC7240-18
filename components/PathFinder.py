@@ -5,30 +5,32 @@ import pathfinder as pf
 from pathfinder.followers import EncoderFollower
 import RobotMap, pickle, wpilib
 import os.path
+from components.OperateArm import OperateArm
+from components.OperateGrabber import OperateGrabber
 
 points = {
     'MiddleLeft': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(8, 9.5, pf.d2r(0)),
-        pf.Waypoint(11.5, 8, pf.d2r(90))
+        pf.Waypoint(9, 9.5, pf.d2r(0)),
+        pf.Waypoint(12.25, 7.65, pf.d2r(90))
     ],
 
     'MiddleRight': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(8, -7.5, pf.d2r(0)),
-        pf.Waypoint(11.5, -5.8, pf.d2r(90))
+        pf.Waypoint(9, -9.5, pf.d2r(0)),
+        pf.Waypoint(12.25, -7.65, pf.d2r(90))
     ],
 
     'Left': [
         pf.Waypoint(0, 0, pf.d2r(0)),
         pf.Waypoint(10, 3, pf.d2r(0)),
-        pf.Waypoint(11.5, 0.75, pf.d2r(90))
+        pf.Waypoint(11.5, -0.8, pf.d2r(90))
     ],
 
     'Right': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(10, -2.5, pf.d2r(0)),
-        pf.Waypoint(11.5, -0.3, pf.d2r(90))
+        pf.Waypoint(10, -3, pf.d2r(0)),
+        pf.Waypoint(11.5, 0.8, pf.d2r(90))
     ]
 }
 
@@ -51,6 +53,8 @@ class PathFinder:
     gyro = ADXRS450_Gyro
     leftEncoder = Encoder
     rightEncoder = Encoder
+    operateArm = OperateArm
+    operateGrabber = OperateGrabber
 
     kp = tunable(RobotMap.kp)
     ki = tunable(RobotMap.ki)
@@ -74,7 +78,7 @@ class PathFinder:
         if location == 'middleright':
             modifier = pf.modifiers.TankModifier(points['MiddleRight']).modify(RobotMap.Width_Base)
         elif location == 'middleleft':
-            modifier = pf.modifiers.TankModifier(points['MiddleRight']).modify(RobotMap.Width_Base)
+            modifier = pf.modifiers.TankModifier(points['MiddleLeft']).modify(RobotMap.Width_Base)
         elif location == 'left':
             modifier = pf.modifiers.TankModifier(points['Left']).modify(RobotMap.Width_Base)
         elif location == 'right':
@@ -93,6 +97,7 @@ class PathFinder:
 
         self.left.reset()
         self.right.reset()
+        self.gyro.reset()
 
         self.running = True
 
@@ -113,6 +118,8 @@ class PathFinder:
 
         self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
         if self.left.isFinished() or self.right.isFinished():
+            self.operateArm.setArm(False)
+            self.operateGrabber.setGrabber(False)
             self.running = True
 
     def on_disable(self):

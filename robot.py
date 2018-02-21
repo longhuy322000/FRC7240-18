@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import wpilib
-from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer, ADXRS450_Gyro, Encoder
+from wpilib import Spark, Joystick, DoubleSolenoid, Solenoid, Compressor, SpeedControllerGroup, drive, CameraServer, ADXRS450_Gyro, Encoder
 from magicbot import MagicRobot
 from components.DriveTrain import DriveTrain
 from components.OperateCompressor import OperateCompressor
 from components.OperateGrabber import OperateGrabber
 from components.PathFinder import PathFinder
+from components.OperateArm import OperateArm
 import math
 import RobotMap
 
@@ -40,6 +41,8 @@ class MyRobot(MagicRobot):
     driveTrain = DriveTrain
     operateGrabber = OperateGrabber
     operateCompressor = OperateCompressor
+    operateArm = OperateArm
+
 
     def createObjects(self):
         self.leftFront = Spark(2)
@@ -56,18 +59,9 @@ class MyRobot(MagicRobot):
         self.myDrive = drive.DifferentialDrive(self.m_left, self.m_right)
         self.myDrive.setSafetyEnabled(False)
 
-        '''self.reverseLeftFront = Spark(2)
-        self.reverseLeftBack = Spark(3)
-        self.reverseRightFront = Spark(0)
-        self.reverseRightBack = Spark(1)
-
-        self.reverse_m_left = SpeedControllerGroup(self.reverserightFront, self.reverseRightBack)
-        self.reverse_m_right = SpeedControllerGroup(self.reverseLeftFront, self.reverseLeftBack)
-        self.reverseMyDrive = drive.DifferentialDrive(self.reverse_m_left, self.reverse_m_right)
-        self.reverseMyDrive.setSafetyEnabled(False)'''
-
         self.compressor = Compressor()
-        self.grabber = DoubleSolenoid(0, 1)
+        self.grabber1 = DoubleSolenoid(0, 1)
+        self.armSolenoid = DoubleSolenoid(2, 3)
 
         self.gamepad = Joystick(0)
 
@@ -87,10 +81,15 @@ class MyRobot(MagicRobot):
     def teleopPeriodic(self):
         self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
 
+        if self.gamepad.getRawAxis(shoulderAxisLeft):
+            self.operateGrabber.setGrabber(True)
+        elif self.gamepad.getRawAxis(shoulderAxisRight):
+            self.operateGrabber.setGrabber(False)
+
         if self.gamepad.getRawButton(BUTTON_A):
-            self.operateGrabber.setGrabber(True, False)
-        if self.gamepad.getRawButton(BUTTON_B):
-            self.operateGrabber.setGrabber(False, True)
+            self.operateArm.setArm(True)
+        elif self.gamepad.getRawButton(BUTTON_B):
+            self.operateArm.setArm(False)
 
         if self.gamepad.getRawButton(BUTTON_L_SHOULDER):
             self.operateCompressor.setCompressor(True)

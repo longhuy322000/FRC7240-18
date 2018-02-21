@@ -2,18 +2,16 @@ from wpilib import DoubleSolenoid
 
 class OperateGrabber:
 
-    grabber = DoubleSolenoid
+    grabber1 = DoubleSolenoid
 
     def __init__(self):
-        self.openGrabber = False
-        self.closeGrabber = False
+        self.option = False
 
-    def setGrabber(self, openGrabber, closeGrabber):
-        self.openGrabber = openGrabber
-        self.closeGrabber = closeGrabber
+    def setGrabber(self, option):
+        self.option = option
 
     def execute(self):
-        if self.openGrabber and not self.closeGrabber:
-            self.grabber.set(DoubleSolenoid.Value.kForward)
+        if self.option:
+            self.grabber1.set(DoubleSolenoid.Value.kForward)
         else:
-            self.grabber.set(DoubleSolenoid.Value.kReverse)
+            self.grabber1.set(DoubleSolenoid.Value.kReverse)

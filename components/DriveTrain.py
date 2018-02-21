@@ -1,11 +1,7 @@
 from wpilib import drive, ADXRS450_Gyro, Encoder
 from magicbot import tunable
 
-import wpilib
-if wpilib.RobotBase.isSimulation():
-    print("I IN SIM")
-else:
-    print("I IS REAL")
+
 
 class DriveTrain:
 
