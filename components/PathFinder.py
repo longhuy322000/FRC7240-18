@@ -1,6 +1,6 @@
 from magicbot import tunable
 from components.DriveTrain import DriveTrain
-from wpilib import ADXRS450_Gyro, Encoder
+from wpilib import ADXRS450_Gyro, Encoder, RobotBase
 import pathfinder as pf
 from pathfinder.followers import EncoderFollower
 import RobotMap, pickle, wpilib
@@ -100,6 +100,12 @@ class PathFinder:
         self.gyro.reset()
 
         self.running = True
+        
+        if RobotBase.isSimulation():
+            from pyfrc.sim import get_user_renderer
+            renderer = get_user_renderer()
+            if renderer:
+                renderer.draw_pathfinder_trajectory(modifier.source)
 
     def execute(self):
         if not self.running:
