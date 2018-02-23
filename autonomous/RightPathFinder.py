@@ -31,4 +31,4 @@ class RightPathFinder(AutonomousStateMachine):
     @state()
     def rightLocation(self, initial_call):
         if initial_call:
-            self.pathFinder.setTrajectory('right', False)
+            self.pathFinder.setTrajectory('RightSwitch', False)

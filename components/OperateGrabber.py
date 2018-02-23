@@ -11,7 +11,6 @@ class OperateGrabber:
         self.option = option
 
     def execute(self):
-        print(self.option)
         if self.option:
             self.grabber.set(DoubleSolenoid.Value.kForward)
         else:

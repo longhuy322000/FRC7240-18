@@ -34,6 +34,6 @@ class MiddlePathFinder(AutonomousStateMachine):
         if initial_call:
             gameData = DriverStation.getInstance().getGameSpecificMessage()
             if gameData[0] == 'R':
-                self.pathFinder.setTrajectory('middleright', False)
+                self.pathFinder.setTrajectory('MiddleRight', False)
             else:
-                self.pathFinder.setTrajectory('middleleft', False)
+                self.pathFinder.setTrajectory('MiddleLeft', False)
