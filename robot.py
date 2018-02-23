@@ -83,7 +83,10 @@ class MyRobot(MagicRobot):
         pass
 
     def teleopPeriodic(self):
-        self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
+        if self.isSimulation():
+            self.driveTrain.moveAuto(self.gamepad.getY(), self.gamepad.getX())
+        else:
+            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
 
         if self.gamepad.getRawAxis(shoulderAxisLeft):
             self.operateGrabber.setGrabber(True)
