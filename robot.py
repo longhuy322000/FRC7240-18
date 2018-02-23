@@ -60,7 +60,7 @@ class MyRobot(MagicRobot):
         self.myDrive.setSafetyEnabled(False)
 
         self.compressor = Compressor()
-        self.grabber1 = DoubleSolenoid(0, 1)
+        self.grabber = DoubleSolenoid(0, 1)
         self.armSolenoid = DoubleSolenoid(2, 3)
 
         self.gamepad = Joystick(0)

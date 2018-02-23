@@ -1,9 +1,9 @@
 from magicbot import tunable
 from components.DriveTrain import DriveTrain
-from wpilib import ADXRS450_Gyro, Encoder
+from wpilib import ADXRS450_Gyro, Encoder, RobotBase
 import pathfinder as pf
 from pathfinder.followers import EncoderFollower
-import RobotMap, pickle, wpilib
+import RobotMap, pickle
 import os.path
 from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
@@ -18,18 +18,27 @@ points = {
     'MiddleRight': [
         pf.Waypoint(0, 0, pf.d2r(0)),
         pf.Waypoint(9, -9.5, pf.d2r(0)),
-        pf.Waypoint(12.25, -7.65, pf.d2r(90))
+        pf.Waypoint(12.25, -7.65, pf.d2r(-90))
     ],
 
     'LeftSwitchLeft': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(10, 3, pf.d2r(0)),
-        pf.Waypoint(11.5, -0.8, pf.d2r(90))
+        pf.Waypoint(3, 21, pf.d2r(0)),
+        pf.Waypoint(10, 24, pf.d2r(0)),
+        pf.Waypoint(15, 21, pf.d2r(-90))
     ],
 
-    'LeftScaleLeft': [
-        pf.Waypoint(11.5, -0.8, pf.d2r(90)),
-        pf.Waypoint(11.5, 3, pf.d2r(90))
+    'LeftSwitchLeftBack': [
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(3.5, 2, pf.d2r(90))
+    ],
+
+    'TakeCubeLeftSwitch': [
+        pf.Waypoint(12, 25, pf.d2r(0)),
+        pf.Waypoint(15, 25, pf.d2r(0)),
+        pf.Waypoint(19, 23, pf.d2r(-90)),
+        pf.Waypoint(17, 20, pf.d2r(180)),
+        pf.Waypoint(16, 20, pf.d2r(180))
+
     ],
 
     'RightSwitch': [
@@ -41,7 +50,7 @@ points = {
 
 pickle_file = os.path.join(os.path.dirname(__file__), 'trajectory.pickle')
 
-if wpilib.RobotBase.isSimulation():
+if RobotBase.isSimulation():
     for key, value in points.items():
         info, trajectory = pf.generate(value, pf.FIT_HERMITE_CUBIC,
                                        pf.SAMPLES_HIGH, RobotMap.dt, RobotMap.max_velocity, RobotMap.max_acceleration, RobotMap.max_jerk)
@@ -76,9 +85,8 @@ class PathFinder:
     active = tunable(0)
 
     def __init__(self):
-        self.points = []
         self.angle_error = 0.0
-        self.running = False
+        self.running = True
         self.reverse = False
 
     def setTrajectory(self, location, reverse):
@@ -86,29 +94,27 @@ class PathFinder:
         self.running = True
         self.angle_error = 0.0
 
-        if location == 'middleright':
-            modifier = pf.modifiers.TankModifier(points['MiddleRight']).modify(RobotMap.Width_Base)
-        elif location == 'middleleft':
-            modifier = pf.modifiers.TankModifier(points['MiddleLeft']).modify(RobotMap.Width_Base)
-        elif location == 'LeftSwitchLeft':
-            modifier = pf.modifiers.TankModifier(points['LeftSwitchLeft']).modify(RobotMap.Width_Base)
-        elif location == 'LeftScaleLeft':
-            modifier = pf.modifiers.TankModifier(points['LeftScaleLeft']).modify(RobotMap.Width_Base)
-        elif location == 'right':
-            modifier = pf.modifiers.TankModifier(points['RightSwitch']).modify(RobotMap.Width_Base)
+        modifier = pf.modifiers.TankModifier(points[location]).modify(RobotMap.Width_Base)
 
         leftTrajectory = modifier.getLeftTrajectory()
         rightTrajectory = modifier.getRightTrajectory()
+
+        if RobotBase.isSimulation():
+            from pyfrc.sim import get_user_renderer
+            renderer = get_user_renderer()
+            if renderer:
+                renderer.draw_pathfinder_trajectory(modifier.source)
 
         self.left = EncoderFollower(leftTrajectory)
         self.right = EncoderFollower(rightTrajectory)
 
         self.left.reset()
         self.right.reset()
+        self.gyro.reset()
 
         if self.reverse:
-            self.left.configureEncoder(-self.leftEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
-            self.right.configureEncoder(-self.rightEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
+            self.left.configureEncoder(-self.rightEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
+            self.right.configureEncoder(-self.leftEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
         else:
             self.left.configureEncoder(self.leftEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
             self.right.configureEncoder(self.rightEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
@@ -116,39 +122,41 @@ class PathFinder:
         self.right.configurePIDVA(self.kp, self.ki, self.kd, self.kv, self.ka)
 
     def execute(self):
-        self.active = self.running
-        #current_gp = self.kp
-
         if not self.running:
             return
 
         if self.reverse:
-            powerLeft = self.left.calculate(-self.leftEncoder.get())
-            powerRight = self.right.calculate(-self.rightEncoder.get())
-            gyro_heading = self.gyro.getAngle()
+            powerLeft = self.left.calculate(-self.rightEncoder.get())
+            powerRight = self.right.calculate(-self.leftEncoder.get())
+            current_gp = -self.gp
         else:
             powerLeft = self.left.calculate(self.leftEncoder.get())
             powerRight = self.right.calculate(self.rightEncoder.get())
-            gyro_heading = -self.gyro.getAngle()
+            current_gp = self.gp
 
+        gyro_heading = -self.gyro.getAngle()
         desired_heading = pf.r2d(self.left.getHeading())
 
         angleDifference = pf.boundHalfDegrees(desired_heading - gyro_heading)
         #turn = 0.8 * (-1.0/80.0) * angleDifference
-        turn = turn = self.kp * angleDifference + (self.gd *
-                ((angleDifference - self.angle_error) / self.dt));
+        turn = current_gp * angleDifference + (self.gd *
+                ((angleDifference - self.angle_error) / self.dt))
         self.angle_error = angleDifference
 
         if self.reverse:
-            self.driveTrain.movePathFinder(powerLeft+turn, powerRight-turn)
+            self.driveTrain.movePathFinder(powerRight, powerLeft)
+            #self.driveTrain.movePathFinder(powerLeft+turn, powerRight-turn)
         else:
             self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
 
         if self.left.isFinished() or self.right.isFinished():
-            self.running = False
+            if abs(pf.boundHalfDegrees(angleDifference)) > 1.5:
+                self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(-desired_heading))
+            else:
+                self.running = False
 
-        print(desired_heading, gyro_heading)
-
+        #print(powerLeft, powerRight, turn)
+        print(desired_heading, gyro_heading, turn, angleDifference)
 
     def on_disable(self):
         self.running = False

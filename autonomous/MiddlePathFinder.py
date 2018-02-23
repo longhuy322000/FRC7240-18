@@ -7,7 +7,7 @@ from wpilib import DriverStation
 class MiddlePathFinder(AutonomousStateMachine):
 
     MODE_NAME = "Middle Pathfinder"
-    DEFAULT = True
+    DEFAULT = False
 
     pathFinder = PathFinder
     operateArm = OperateArm
@@ -34,6 +34,6 @@ class MiddlePathFinder(AutonomousStateMachine):
         if initial_call:
             gameData = DriverStation.getInstance().getGameSpecificMessage()
             if gameData[0] == 'R':
-                self.pathFinder.setTrajectory('middleright')
+                self.pathFinder.setTrajectory('middleright', False)
             else:
-                self.pathFinder.setTrajectory('middleleft')
+                self.pathFinder.setTrajectory('middleleft', False)
