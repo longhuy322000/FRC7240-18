@@ -99,12 +99,6 @@ class PathFinder:
         leftTrajectory = modifier.getLeftTrajectory()
         rightTrajectory = modifier.getRightTrajectory()
 
-        if RobotBase.isSimulation():
-            from pyfrc.sim import get_user_renderer
-            renderer = get_user_renderer()
-            if renderer:
-                renderer.draw_pathfinder_trajectory(modifier.source)
-
         self.left = EncoderFollower(leftTrajectory)
         self.right = EncoderFollower(rightTrajectory)
 
@@ -120,6 +114,14 @@ class PathFinder:
             self.right.configureEncoder(self.rightEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
         self.left.configurePIDVA(self.kp, self.ki, self.kd, self.kv, self.ka)
         self.right.configurePIDVA(self.kp, self.ki, self.kd, self.kv, self.ka)
+
+        if RobotBase.isSimulation():
+            from pyfrc.sim import get_user_renderer
+            renderer = get_user_renderer()
+            if renderer:
+                renderer.draw_pathfinder_trajectory(leftTrajectory, color='#0000ff', offset=(-1,0))
+                renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00')
+                renderer.draw_pathfinder_trajectory(rightTrajectory, color='#0000ff', offset=(1,0))
 
     def execute(self):
         if not self.running:
