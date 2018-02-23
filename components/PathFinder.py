@@ -119,9 +119,14 @@ class PathFinder:
             from pyfrc.sim import get_user_renderer
             renderer = get_user_renderer()
             if renderer:
-                renderer.draw_pathfinder_trajectory(leftTrajectory, color='#0000ff', offset=(-1,0))
-                renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00')
-                renderer.draw_pathfinder_trajectory(rightTrajectory, color='#0000ff', offset=(1,0))
+                if self.reverse:
+                    renderer.draw_pathfinder_trajectory(leftTrajectory, color='#0000ff', offset=(1,0), scale=(-1,-1))
+                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', scale=(-1,-1))
+                    renderer.draw_pathfinder_trajectory(rightTrajectory, color='#0000ff', offset=(-1,0), scale=(-1,-1))
+                else:
+                    renderer.draw_pathfinder_trajectory(leftTrajectory, color='#0000ff', offset=(-1,0))
+                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00')
+                    renderer.draw_pathfinder_trajectory(rightTrajectory, color='#0000ff', offset=(1,0))
 
     def execute(self):
         if not self.running:
