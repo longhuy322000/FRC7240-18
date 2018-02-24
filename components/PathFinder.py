@@ -16,7 +16,7 @@ points = {
     'MiddleRight': [
         pf.Waypoint(0, 0, pf.d2r(0)),
         pf.Waypoint(8, -7.5, pf.d2r(0)),
-        pf.Waypoint(11.5, -5.8, pf.d2r(90))
+        pf.Waypoint(11.5, -6, pf.d2r(90))
     ],
 
     'Left': [
@@ -43,7 +43,10 @@ if wpilib.RobotBase.isSimulation():
         pickle.dump(points, f, pickle.HIGHEST_PROTOCOL)
 
 with open(pickle_file, 'rb') as f:
-        points = pickle.load(f)
+    points = pickle.load(f)
+
+print(type(points['Left']))
+print(type(points['Left'][0]))
 
 class PathFinder:
 
@@ -74,7 +77,7 @@ class PathFinder:
         if location == 'middleright':
             modifier = pf.modifiers.TankModifier(points['MiddleRight']).modify(RobotMap.Width_Base)
         elif location == 'middleleft':
-            modifier = pf.modifiers.TankModifier(points['MiddleRight']).modify(RobotMap.Width_Base)
+            modifier = pf.modifiers.TankModifier(points['MiddleLeft']).modify(RobotMap.Width_Base)
         elif location == 'left':
             modifier = pf.modifiers.TankModifier(points['Left']).modify(RobotMap.Width_Base)
         elif location == 'right':
