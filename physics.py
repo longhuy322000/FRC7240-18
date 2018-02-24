@@ -19,6 +19,8 @@ class PhysicsEngine(object):
         self.left_distance = 0
         self.right_distance = 0
         self.WHEEL_DIAMETER = 0.5
+        
+        self.drivetrain = drivetrains.FourMotorDrivetrain()
 
     def update_sim(self, hal_data, now, tm_diff):
         '''
@@ -35,13 +37,13 @@ class PhysicsEngine(object):
         rr_motor = hal_data['pwm'][1]['value']*-1
         lf_motor = hal_data['pwm'][2]['value']*-1
         rf_motor = hal_data['pwm'][0]['value']*-1
-
-        speed, rotation, leftSpeed, rightSpeed = drivetrains.four_motor_drivetrain(lr_motor, rr_motor, lf_motor, rf_motor)
+        
+        speed, rotation = self.drivetrain.get_vector(lr_motor, rr_motor, lf_motor, rf_motor)
         #if abs(speed) > 0:
         #    rotation -= 0.3
         self.physics_controller.drive(speed, rotation, tm_diff)
-        self.left_distance += (leftSpeed * tm_diff)
-        self.right_distance += (rightSpeed * tm_diff)
+        self.left_distance += (self.drivetrain.l_speed * tm_diff)
+        self.right_distance += (self.drivetrain.r_speed * tm_diff)
         self.left_counter = self.left_distance / (RobotMap.WHEEL_DIAMETER * math.pi / 360)
         self.right_counter = self.right_distance / (RobotMap.WHEEL_DIAMETER * math.pi / 360)
 

@@ -4,11 +4,9 @@ import RobotMap
 
 points = [
     pf.Waypoint(0, 0, pf.d2r(0)),
-    pf.Waypoint(7, -8, pf.d2r(0)),
-    #pf.Waypoint(7.25, -7.75, pf.d2r(20)),
-    #pf.Waypoint(7.5, -7.5, pf.d2r(30)),
-    #pf.Waypoint(7.75, -7.25, pf.d2r(37)),
-    pf.Waypoint(8, -7, pf.d2r(90))
+    pf.Waypoint(10, 3, pf.d2r(0)),
+    pf.Waypoint(11.5, -0.8, pf.d2r(90)),
+    pf.Waypoint(11.5, 3, pf.d2r(90))
 ]
 
 info, trajectory = pf.generate(points, pf.FIT_HERMITE_CUBIC,

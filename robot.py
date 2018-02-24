@@ -7,6 +7,7 @@ from components.DriveTrain import DriveTrain
 from components.OperateCompressor import OperateCompressor
 from components.OperateGrabber import OperateGrabber
 from components.PathFinder import PathFinder
+from components.OperateArm import OperateArm
 import math
 import RobotMap
 
@@ -40,6 +41,8 @@ class MyRobot(MagicRobot):
     driveTrain = DriveTrain
     operateGrabber = OperateGrabber
     operateCompressor = OperateCompressor
+    operateArm = OperateArm
+
 
     def createObjects(self):
         self.leftFront = Spark(2)
@@ -58,6 +61,7 @@ class MyRobot(MagicRobot):
 
         self.compressor = Compressor()
         self.grabber = DoubleSolenoid(0, 1)
+        self.armSolenoid = DoubleSolenoid(2, 3)
 
         self.gamepad = Joystick(0)
 
@@ -71,16 +75,28 @@ class MyRobot(MagicRobot):
 
         CameraServer.launch('vision.py:main')
 
+    def autonomous(self):
+        self.gyro.reset()
+        super().autonomous()
+
     def teleopInit(self):
         pass
 
     def teleopPeriodic(self):
-        self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
+        if self.isSimulation():
+            self.driveTrain.moveAuto(self.gamepad.getY(), self.gamepad.getX())
+        else:
+            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
+
+        if self.gamepad.getRawAxis(shoulderAxisLeft):
+            self.operateGrabber.setGrabber(True)
+        elif self.gamepad.getRawAxis(shoulderAxisRight):
+            self.operateGrabber.setGrabber(False)
 
         if self.gamepad.getRawButton(BUTTON_A):
-            self.operateGrabber.setGrabber(True, False)
-        if self.gamepad.getRawButton(BUTTON_B):
-            self.operateGrabber.setGrabber(False, True)
+            self.operateArm.setArm(True)
+        elif self.gamepad.getRawButton(BUTTON_B):
+            self.operateArm.setArm(False)
 
         if self.gamepad.getRawButton(BUTTON_L_SHOULDER):
             self.operateCompressor.setCompressor(True)

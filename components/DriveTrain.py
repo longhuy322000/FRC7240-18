@@ -19,6 +19,7 @@ class DriveTrain:
         self.CENTER = 0.0
         self.option = -1
         self.angle = 0
+        self.kP = 0.8
 
     def stickDeadband(self, value):
         if value < (self.CENTER + self.STICK_DEADBAND) and value > (self.CENTER - self.STICK_DEADBAND):
