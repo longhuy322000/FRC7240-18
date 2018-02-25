@@ -75,10 +75,6 @@ class MyRobot(MagicRobot):
 
         CameraServer.launch('vision.py:main')
 
-    def autonomous(self):
-        self.gyro.reset()
-        super().autonomous()
-
     def teleopInit(self):
         pass
 

@@ -7,7 +7,7 @@ from wpilib import DriverStation
 class LeftPathFinder(AutonomousStateMachine):
 
     MODE_NAME = "Left Pathfinder"
-    DEFAULT = True
+    DEFAULT = False
 
     pathFinder = PathFinder
     operateArm = OperateArm
@@ -28,24 +28,38 @@ class LeftPathFinder(AutonomousStateMachine):
 
     @state
     def goToSwitch(self, initial_call):
+        gameData = DriverStation.getInstance().getGameSpecificMessage()
         if initial_call:
-            gameData = DriverStation.getInstance().getGameSpecificMessage()
             if gameData[0] == 'L':
                 self.pathFinder.setTrajectory('LeftSwitchLeft', False)
+            else:
+                self.pathFinder.setTrajectory('LeftSwitchRight1', False)
         if not self.pathFinder.running:
-                self.next_state('lowerArmmToSwitch')
+            if gameData[0] == 'L':
+                    self.next_state('lowerArmToSwitch')
+            else:
+                self.next_state('RightSwitchState2')
+
+    @state
+    def RightSwitchState2(self, initial_call):
+        if initial_call:
+            self.pathFinder.setTrajectory('LeftSwitchRight2', False)
+        if not self.pathFinder.running:
+            self.next_state('lowerArmToSwitch')
 
     @timed_state(duration=0.3, next_state='readyForScale')
-    def lowerArmmToSwitch(self):
+    def lowerArmToSwitch(self):
         self.operateArm.setArm(False)
         self.operateGrabber.setGrabber(False)
 
     @state
     def readyForScale(self, initial_call):
-        if initial_call:
-            self.pathFinder.setTrajectory('LeftSwitchLeftBack', True)
-        if not self.pathFinder.running:
-            self.next_state('takeCubeLeftSwitch')
+        gameData = DriverStation.getInstance().getGameSpecificMessage()
+        if gameData[0] == 'L':
+            if initial_call:
+                self.pathFinder.setTrajectory('LeftSwitchBack', True)
+            if not self.pathFinder.running:
+                self.next_state('takeCubeLeftSwitch')
 
     @state
     def takeCubeLeftSwitch(self, initial_call):
