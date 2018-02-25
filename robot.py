@@ -8,8 +8,11 @@ from components.OperateCompressor import OperateCompressor
 from components.OperateGrabber import OperateGrabber
 from components.PathFinder import PathFinder
 from components.OperateArm import OperateArm
-import math
-import RobotMap
+import math, RobotMap
+from networktables import NetworkTables
+
+table = NetworkTables.getTable('SmartDashboard')
+table.putNumber('SupportAlliance', 0)
 
 # Gamepad Axis
 leftStick_X = 0

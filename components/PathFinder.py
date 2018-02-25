@@ -8,17 +8,25 @@ import os.path
 from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
 
+'''
+pf.Waypoint(0, 0, pf.d2r(0)),
+pf.Waypoint(1, 0, pf.d2r(0)),
+pf.Waypoint(9, 10.5, pf.d2r(0)),
+pf.Waypoint(12, 7.65, pf.d2r(90))
+'''
 points = {
     'MiddleLeft': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(9, 9.5, pf.d2r(0)),
-        pf.Waypoint(12.25, 7.65, pf.d2r(90))
+        pf.Waypoint(3, 3, pf.d2r(90)),
+        pf.Waypoint(3, 6, pf.d2r(90)),
+        pf.Waypoint(6, 10.5, pf.d2r(0)),
+        pf.Waypoint(9.5, 7.25, pf.d2r(90))
     ],
 
     'MiddleRight': [
         pf.Waypoint(0, 0, pf.d2r(0)),
         pf.Waypoint(9, -9.5, pf.d2r(0)),
-        pf.Waypoint(12.25, -7.65, pf.d2r(-90))
+        pf.Waypoint(11, -7.65, pf.d2r(-90))
     ],
 
     'LeftSwitchLeft': [
@@ -200,7 +208,7 @@ class PathFinder:
 
         if self.left.isFinished() or self.right.isFinished():
             if abs(pf.boundHalfDegrees(angleDifference)) > 1.5:
-                print(desired_heading, gyro_heading, turn, angleDifference)
+                #print(desired_heading, gyro_heading, turn, angleDifference)
                 if self.location == 'TakeCubeRightSwitch':
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(desired_heading))
                 else:
@@ -209,7 +217,7 @@ class PathFinder:
                 self.running = False
 
         #print(powerLeft, powerRight, turn)
-        #print(desired_heading, gyro_heading, turn, angleDifference)
+        print(desired_heading, gyro_heading, turn, angleDifference)
 
     def on_disable(self):
         self.running = False

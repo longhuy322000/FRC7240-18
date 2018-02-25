@@ -3,11 +3,14 @@ from components.PathFinder import PathFinder
 from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
 from wpilib import DriverStation
+from networktables import NetworkTables
+
+table = NetworkTables.getTable('SmartDashboard')
 
 class MiddlePathFinder(AutonomousStateMachine):
 
     MODE_NAME = "Middle Pathfinder"
-    DEFAULT = False
+    DEFAULT = True
 
     pathFinder = PathFinder
     operateArm = OperateArm
@@ -15,6 +18,8 @@ class MiddlePathFinder(AutonomousStateMachine):
 
     @timed_state(duration=0.5, first=True, next_state='lowerArm')
     def openGrabber(self):
+        supportAlliance = table.getBoolean('SupportAlliance', 0)
+        print(supportAlliance )
         self.operateGrabber.setGrabber(False)
 
     @timed_state(duration=0.5, next_state='closeGrabber')

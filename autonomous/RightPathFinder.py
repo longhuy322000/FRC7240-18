@@ -7,7 +7,7 @@ from wpilib import DriverStation
 class RightPathFinder(AutonomousStateMachine):
 
     MODE_NAME = "Right Pathfinder"
-    DEFAULT = True
+    DEFAULT = False
 
     pathFinder = PathFinder
     operateArm = OperateArm
