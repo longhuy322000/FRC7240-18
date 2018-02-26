@@ -13,19 +13,16 @@ class RightPathFinder(AutonomousStateMachine):
     operateArm = OperateArm
     operateGrabber = OperateGrabber
 
-    @timed_state(duration=0.5, first=True, next_state='lowerArm')
+    @timed_state(duration=0.2, first=True, next_state='closeGrabber')
     def openGrabber(self):
         self.operateGrabber.setGrabber(False)
-
-    @timed_state(duration=0.5, next_state='closeGrabber')
-    def lowerArm(self):
         self.operateArm.setArm(False)
 
-    @timed_state(duration=0.5, next_state='liftArm')
+    @timed_state(duration=0.2, next_state='liftArm')
     def closeGrabber(self):
         self.operateGrabber.setGrabber(True)
 
-    @timed_state(duration=0.5, next_state='goToSwitch')
+    @timed_state(duration=0.2, next_state='goToSwitch')
     def liftArm(self):
         self.operateArm.setArm(True)
 

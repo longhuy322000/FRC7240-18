@@ -3,21 +3,10 @@ from components.DriveTrain import DriveTrain
 from wpilib import ADXRS450_Gyro, Encoder, RobotBase
 import pathfinder as pf
 from pathfinder.followers import EncoderFollower
-import RobotMap, pickle
-import os.path
+import RobotMap, pickle, os.path
 from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
 
-'''
-pf.Waypoint(0, 0, pf.d2r(0)),
-pf.Waypoint(3.5, 2, pf.d2r(90))
-
-pf.Waypoint(12, 25, pf.d2r(0)),
-pf.Waypoint(17, 25, pf.d2r(0)),
-pf.Waypoint(19, 23, pf.d2r(-90)),
-pf.Waypoint(17, 20.25, pf.d2r(180)),
-pf.Waypoint(16, 20.25, pf.d2r(180))
-'''
 points = {
     'PreparePortal':[
         pf.Waypoint(1.5, 13, pf.d2r(0)),
@@ -30,14 +19,38 @@ points = {
         pf.Waypoint(4.4, 0, pf.d2r(0))
     ],
 
+    'MiddleExtraLeftCube': [
+        pf.Waypoint(5, 24, pf.d2r(0)),
+        pf.Waypoint(18, 25, pf.d2r(0)),
+        pf.Waypoint(21, 22, pf.d2r(-90)),
+        pf.Waypoint(19, 19.5, pf.d2r(180))
+    ],
+
+    'MiddleExtraRightCube': [
+        pf.Waypoint(5, 24, pf.d2r(0)),
+        pf.Waypoint(18, 22, pf.d2r(0)),
+        pf.Waypoint(21, 25, pf.d2r(-90)),
+        pf.Waypoint(19, 23.5, pf.d2r(180))
+    ],
+
     'MiddleBackLeftSwitch': [
-        pf.Waypoint(1.5, 15.5, pf.d2r(0)),
-        pf.Waypoint(9, 25, pf.d2r(-90))
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(5, -6, pf.d2r(0))
+    ],
+
+    'MiddleBackRightSwitch': [
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(5, 6, pf.d2r(0))
     ],
 
     'MiddleToLeftSwitch': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(3.7, 4, pf.d2r(0))
+        pf.Waypoint(1.5, 13, pf.d2r(0)),
+        pf.Waypoint(10, 18, pf.d2r(0))
+    ],
+
+    'MiddleToRightSwitch': [
+        pf.Waypoint(1.5, 13, pf.d2r(0)),
+        pf.Waypoint(10, 9, pf.d2r(0))
     ],
 
     'LeftSwitchLeft': [

@@ -1,6 +1,6 @@
 *.pyc
 .deploy_cfg
 .installer_config
-__pycache__
-
+__pycache__/
 tests/.cache
+components/trajectory.pickle
