@@ -8,23 +8,42 @@ import os.path
 from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
 
+'''
+pf.Waypoint(0, 0, pf.d2r(0)),
+pf.Waypoint(3.5, 2, pf.d2r(90))
+
+pf.Waypoint(12, 25, pf.d2r(0)),
+pf.Waypoint(17, 25, pf.d2r(0)),
+pf.Waypoint(19, 23, pf.d2r(-90)),
+pf.Waypoint(17, 20.25, pf.d2r(180)),
+pf.Waypoint(16, 20.25, pf.d2r(180))
+'''
 points = {
-    'MiddleLeft': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(9, 9.5, pf.d2r(0)),
-        pf.Waypoint(12.25, 7.65, pf.d2r(90))
+    'PreparePortal':[
+        pf.Waypoint(1.5, 13, pf.d2r(0)),
+        pf.Waypoint(3, 13, pf.d2r(0)),
+        pf.Waypoint(6, 15.5, pf.d2r(90))
     ],
 
-    'MiddleRight': [
+    'DropCubePortal': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(9, -9.5, pf.d2r(0)),
-        pf.Waypoint(12.25, -7.65, pf.d2r(-90))
+        pf.Waypoint(4.4, 0, pf.d2r(0))
+    ],
+
+    'MiddleBackLeftSwitch': [
+        pf.Waypoint(1.5, 15.5, pf.d2r(0)),
+        pf.Waypoint(9, 25, pf.d2r(-90))
+    ],
+
+    'MiddleToLeftSwitch': [
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(3.7, 4, pf.d2r(0))
     ],
 
     'LeftSwitchLeft': [
-        pf.Waypoint(3, 21, pf.d2r(0)),
+        pf.Waypoint(1.5, 21, pf.d2r(0)),
         pf.Waypoint(10, 24, pf.d2r(0)),
-        pf.Waypoint(15, 20.7, pf.d2r(-90))
+        pf.Waypoint(14, 21.3, pf.d2r(-90))
     ],
 
     'LeftSwitchRight1': [
@@ -37,40 +56,35 @@ points = {
     'LeftSwitchRight2': [
         pf.Waypoint(0, 0, pf.d2r(0)),
         pf.Waypoint(9, 0, pf.d2r(0)),
-        pf.Waypoint(13.5, -3.75, pf.d2r(-90))
+        pf.Waypoint(12.5, -1.25, pf.d2r(-90))
     ],
 
     'LeftSwitchBack': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(3.5, 2, pf.d2r(90))
+        pf.Waypoint(2.5, -2.5, pf.d2r(-90)),
+        pf.Waypoint(-0.5, -7, pf.d2r(-90))
     ],
 
     'TakeCubeLeftSwitch': [
-        pf.Waypoint(12, 25, pf.d2r(0)),
-        pf.Waypoint(17, 25, pf.d2r(0)),
-        pf.Waypoint(19, 23, pf.d2r(-90)),
-        pf.Waypoint(17, 20.25, pf.d2r(180)),
-        pf.Waypoint(16, 20.25, pf.d2r(180))
-
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(3.3, 2.5, pf.d2r(0))
     ],
 
     'RightSwitchRight': [
-        pf.Waypoint(3, 6, pf.d2r(0)),
+        pf.Waypoint(1.5, 6, pf.d2r(0)),
         pf.Waypoint(10, 3, pf.d2r(0)),
-        pf.Waypoint(15, 6.8, pf.d2r(90))
+        pf.Waypoint(14, 5.7, pf.d2r(90))
     ],
 
     'RightSwitchBack': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(3.5, -2, pf.d2r(-90))
+        pf.Waypoint(2.5, 2.5, pf.d2r(-90)),
+        pf.Waypoint(-0.5, 7, pf.d2r(-90))
     ],
 
     'TakeCubeRightSwitch': [
-        pf.Waypoint(12, 25, pf.d2r(0)),
-        pf.Waypoint(17, 25, pf.d2r(0)),
-        pf.Waypoint(20, 27, pf.d2r(90)),
-        pf.Waypoint(18, 29, pf.d2r(180)),
-        pf.Waypoint(16.5, 29, pf.d2r(180))
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(3.3, -2.3, pf.d2r(0))
 
     ],
 
@@ -100,9 +114,6 @@ if RobotBase.isSimulation():
 
 with open(pickle_file, 'rb') as f:
     points = pickle.load(f)
-
-print(type(points['Left']))
-print(type(points['Left'][0]))
 
 class PathFinder:
 
@@ -203,7 +214,7 @@ class PathFinder:
 
         if self.left.isFinished() or self.right.isFinished():
             if abs(pf.boundHalfDegrees(angleDifference)) > 1.5:
-                print(desired_heading, gyro_heading, turn, angleDifference)
+                #print(desired_heading, gyro_heading, turn, angleDifference)
                 if self.location == 'TakeCubeRightSwitch':
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(desired_heading))
                 else:
@@ -212,7 +223,7 @@ class PathFinder:
                 self.running = False
 
         #print(powerLeft, powerRight, turn)
-        #print(desired_heading, gyro_heading, turn, angleDifference)
+        print(desired_heading, gyro_heading, turn, angleDifference)
 
     def on_disable(self):
         self.running = False
