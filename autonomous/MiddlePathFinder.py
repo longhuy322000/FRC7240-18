@@ -19,10 +19,18 @@ class MiddlePathFinder(AutonomousStateMachine):
     gyro = ADXRS450_Gyro
     driveTrain = DriveTrain
 
+    def __init__(self):
+        self.gameData = None
+        self.supportLeftAlliance =False
+        self.supportMiddleAlliance = False
+        self.supportRightAlliance = False
+
     @timed_state(duration=0.2, first=True, next_state='closeGrabber')
     def openGrabber(self):
-        supportAlliance = table.getBoolean('SupportAlliance', 0)
-        print(supportAlliance )
+        self.gameData = DriverStation.getInstance().getGameSpecificMessage()
+        self.supportLeftAlliance = table.getBoolean('supportLeftAlliance', False)
+        self.supportMiddleAlliance = table.getBoolean('supportMiddleAlliance', False)
+        self.supportRightAlliance = table.getBoolean('supportRightAlliance', False)
         self.operateGrabber.setGrabber(False)
         self.operateArm.setArm(False)
 
@@ -33,8 +41,7 @@ class MiddlePathFinder(AutonomousStateMachine):
     @state
     def goToSwitch(self, initial_call):
         if initial_call:
-            gameData = DriverStation.getInstance().getGameSpecificMessage()
-            if gameData[0] == 'L':
+            if self.gameData[0] == 'L':
                 self.pathFinder.setTrajectory('MiddleToLeftSwitch', False)
             else:
                 self.pathFinder.setTrajectory('MiddleToRightSwitch', False)
@@ -44,8 +51,7 @@ class MiddlePathFinder(AutonomousStateMachine):
     @state
     def backToCube(self, initial_call):
         if initial_call:
-            gameData = DriverStation.getInstance().getGameSpecificMessage()
-            if gameData[0] == 'L':
+            if self.gameData[0] == 'L':
                 self.pathFinder.setTrajectory('MiddleBackLeftSwitch', True)
             else:
                 self.pathFinder.setTrajectory('MiddleBackRightSwitch', True)
@@ -55,8 +61,7 @@ class MiddlePathFinder(AutonomousStateMachine):
     @state
     def grabExtraCube(self, initial_call):
         if initial_call:
-            gameData = DriverStation.getInstance().getGameSpecificMessage()
-            if gameData[0] == 'L':
-                self.pathFinder.setTrajectory('MiddleExtraLeftCube', False)
+            if self.gameData[0] == 'L':
+                self.pathFinder.setTrajectory('MiddleLeftCrossLine', False)
             else:
-                self.pathFinder.setTrajectory('MiddleExtraRightCube', False)
+                self.pathFinder.setTrajectory('MiddleRightCrossLine', False)

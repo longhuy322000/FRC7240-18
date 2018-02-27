@@ -3,6 +3,9 @@ from components.PathFinder import PathFinder
 from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
 from wpilib import DriverStation
+from networktables import NetworkTables
+
+table = NetworkTables.getTable('SmartDashboard')
 
 class LeftPathFinder(AutonomousStateMachine):
 
@@ -13,8 +16,18 @@ class LeftPathFinder(AutonomousStateMachine):
     operateArm = OperateArm
     operateGrabber = OperateGrabber
 
+    def __init__(self):
+        self.gameData = None
+        self.supportLeftAlliance =False
+        self.supportMiddleAlliance = False
+        self.supportRightAlliance = False
+
     @timed_state(duration=0.2, first=True, next_state='closeGrabber')
     def openAndLowerArm(self):
+        self.gameData = DriverStation.getInstance().getGameSpecificMessage()
+        self.supportLeftAlliance = table.getBoolean('supportLeftAlliance', False)
+        self.supportMiddleAlliance = table.getBoolean('supportMiddleAlliance', False)
+        self.supportRightAlliance = table.getBoolean('supportRightAlliance', False)
         self.operateGrabber.setGrabber(False)
         self.operateArm.setArm(False)
 
@@ -28,14 +41,13 @@ class LeftPathFinder(AutonomousStateMachine):
 
     @state
     def goToSwitch(self, initial_call):
-        gameData = DriverStation.getInstance().getGameSpecificMessage()
         if initial_call:
-            if gameData[0] == 'L':
+            if self.gameData[0] == 'L':
                 self.pathFinder.setTrajectory('LeftSwitchLeft', False)
             else:
                 self.pathFinder.setTrajectory('LeftSwitchRight1', False)
         if not self.pathFinder.running:
-            if gameData[0] == 'L':
+            if self.gameData[0] == 'L':
                     self.next_state('lowerArmToSwitch')
             else:
                 self.next_state('RightSwitchState2')
@@ -54,8 +66,7 @@ class LeftPathFinder(AutonomousStateMachine):
 
     @state
     def readyForScale(self, initial_call):
-        gameData = DriverStation.getInstance().getGameSpecificMessage()
-        if gameData[0] == 'L':
+        if self.gameData[0] == 'L':
             if initial_call:
                 self.pathFinder.setTrajectory('LeftSwitchBack', True)
             if not self.pathFinder.running:

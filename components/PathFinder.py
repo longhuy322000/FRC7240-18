@@ -19,18 +19,16 @@ points = {
         pf.Waypoint(4.4, 0, pf.d2r(0))
     ],
 
-    'MiddleExtraLeftCube': [
-        pf.Waypoint(5, 24, pf.d2r(0)),
-        pf.Waypoint(18, 25, pf.d2r(0)),
-        pf.Waypoint(21, 22, pf.d2r(-90)),
-        pf.Waypoint(19, 19.5, pf.d2r(180))
+    'MiddleLeftCrossLine': [
+        pf.Waypoint(5, 0, pf.d2r(0)),
+        pf.Waypoint(10, 1.5, pf.d2r(0)),
+        pf.Waypoint(16, 1.5, pf.d2r(0))
     ],
 
-    'MiddleExtraRightCube': [
-        pf.Waypoint(5, 24, pf.d2r(0)),
-        pf.Waypoint(18, 22, pf.d2r(0)),
-        pf.Waypoint(21, 25, pf.d2r(-90)),
-        pf.Waypoint(19, 23.5, pf.d2r(180))
+    'MiddleRightCrossLine': [
+        pf.Waypoint(5, 0, pf.d2r(0)),
+        pf.Waypoint(10, -1.5, pf.d2r(0)),
+        pf.Waypoint(16, -1.5, pf.d2r(0))
     ],
 
     'MiddleBackLeftSwitch': [
@@ -50,7 +48,7 @@ points = {
 
     'MiddleToRightSwitch': [
         pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(10, 9, pf.d2r(0))
+        pf.Waypoint(10.2, 9, pf.d2r(0))
     ],
 
     'LeftSwitchLeft': [
@@ -228,7 +226,7 @@ class PathFinder:
         if self.left.isFinished() or self.right.isFinished():
             if abs(pf.boundHalfDegrees(angleDifference)) > 1.5:
                 #print(desired_heading, gyro_heading, turn, angleDifference)
-                if self.location == 'TakeCubeRightSwitch':
+                if self.location == 'MiddleExtraRightCube':
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(desired_heading))
                 else:
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(-desired_heading))

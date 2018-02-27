@@ -12,7 +12,9 @@ import math, RobotMap
 from networktables import NetworkTables
 
 table = NetworkTables.getTable('SmartDashboard')
-table.putNumber('SupportAlliance', 0)
+table.putBoolean('supportLeftAlliance', False)
+table.putBoolean('supportMiddleAlliance', False)
+table.putBoolean('supportRightAlliance', False)
 
 # Gamepad Axis
 leftStick_X = 0
