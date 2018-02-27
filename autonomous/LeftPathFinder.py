@@ -22,12 +22,42 @@ class LeftPathFinder(AutonomousStateMachine):
         self.supportMiddleAlliance = False
         self.supportRightAlliance = False
 
-    @timed_state(duration=0.2, first=True, next_state='closeGrabber')
-    def openAndLowerArm(self):
+    @state(first=True)
+    def startAutonomous(self):
         self.gameData = DriverStation.getInstance().getGameSpecificMessage()
         self.supportLeftAlliance = table.getBoolean('supportLeftAlliance', False)
         self.supportMiddleAlliance = table.getBoolean('supportMiddleAlliance', False)
         self.supportRightAlliance = table.getBoolean('supportRightAlliance', False)
+        print(self.supportLeftAlliance, self.supportMiddleAlliance, self.supportRightAlliance)
+        if self.gameData[0] == 'R':
+            if self.supportRightAlliance:
+                self.next_state('supportSwitchAlliance1')
+            else:
+                self.next_state('crossAutoLine')
+        else:
+            self.next_state('openAndLowerArm')
+
+    @state
+    def supportSwitchAlliance1(self, initial_call):
+        if initial_call:
+            self.pathFinder.setTrajectory('LeftSwitchRight1', False)
+        if not self.pathFinder.running:
+            self.next_state('supportSwitchAlliance2')
+
+    @state
+    def supportSwitchAlliance2(self, initial_call):
+        if initial_call:
+            self.pathFinder.setTrajectory('LeftSwitchRight2', False)
+        if not self.pathFinder.running:
+            pass
+
+    @state
+    def crossAutoLine(self, initial_call):
+        if initial_call:
+            self.pathFinder.setTrajectory('goForward', False)
+
+    @timed_state(duration=0.2, next_state='closeGrabber')
+    def openAndLowerArm(self):
         self.operateGrabber.setGrabber(False)
         self.operateArm.setArm(False)
 
@@ -42,20 +72,7 @@ class LeftPathFinder(AutonomousStateMachine):
     @state
     def goToSwitch(self, initial_call):
         if initial_call:
-            if self.gameData[0] == 'L':
-                self.pathFinder.setTrajectory('LeftSwitchLeft', False)
-            else:
-                self.pathFinder.setTrajectory('LeftSwitchRight1', False)
-        if not self.pathFinder.running:
-            if self.gameData[0] == 'L':
-                    self.next_state('lowerArmToSwitch')
-            else:
-                self.next_state('RightSwitchState2')
-
-    @state
-    def RightSwitchState2(self, initial_call):
-        if initial_call:
-            self.pathFinder.setTrajectory('LeftSwitchRight2', False)
+            self.pathFinder.setTrajectory('LeftSwitchLeft', False)
         if not self.pathFinder.running:
             self.next_state('lowerArmToSwitch')
 
@@ -66,11 +83,10 @@ class LeftPathFinder(AutonomousStateMachine):
 
     @state
     def readyForScale(self, initial_call):
-        if self.gameData[0] == 'L':
-            if initial_call:
-                self.pathFinder.setTrajectory('LeftSwitchBack', True)
-            if not self.pathFinder.running:
-                self.next_state('takeCubeLeftSwitch')
+        if initial_call:
+            self.pathFinder.setTrajectory('LeftSwitchBack', True)
+        if not self.pathFinder.running:
+            self.next_state('takeCubeLeftSwitch')
 
     @state
     def takeCubeLeftSwitch(self, initial_call):

@@ -8,6 +8,11 @@ from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
 
 points = {
+    'goForward': [
+        pf.Waypoint(1.5, 21, pf.d2r(0)),
+        pf.Waypoint(14, 24, pf.d2r(0))
+    ],
+
     'PreparePortal':[
         pf.Waypoint(1.5, 13, pf.d2r(0)),
         pf.Waypoint(3, 13, pf.d2r(0)),
@@ -61,13 +66,13 @@ points = {
         pf.Waypoint(3, 21, pf.d2r(0)),
         pf.Waypoint(10, 24, pf.d2r(0)),
         pf.Waypoint(17, 24, pf.d2r(0)),
-        pf.Waypoint(21, 20, pf.d2r(-90))
+        pf.Waypoint(22, 20, pf.d2r(-90))
     ],
 
     'LeftSwitchRight2': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(9, 0, pf.d2r(0)),
-        pf.Waypoint(12.5, -1.25, pf.d2r(-90))
+        pf.Waypoint(11, 0, pf.d2r(0)),
+        pf.Waypoint(13.2, -2.5, pf.d2r(-90))
     ],
 
     'LeftSwitchBack': [
