@@ -4,7 +4,6 @@ import wpilib
 from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer, ADXRS450_Gyro, Encoder
 from magicbot import MagicRobot
 from components.DriveTrain import DriveTrain
-from components.OperateCompressor import OperateCompressor
 from components.OperateGrabber import OperateGrabber
 from components.PathFinder import PathFinder
 from components.OperateArm import OperateArm
@@ -12,9 +11,6 @@ import math, RobotMap
 from networktables import NetworkTables
 
 table = NetworkTables.getTable('SmartDashboard')
-table.putBoolean('supportLeftAlliance', False)
-table.putBoolean('supportMiddleAlliance', False)
-table.putBoolean('supportRightAlliance', False)
 
 # Gamepad Axis
 leftStick_X = 0
@@ -45,11 +41,14 @@ class MyRobot(MagicRobot):
     pathFinder = PathFinder
     driveTrain = DriveTrain
     operateGrabber = OperateGrabber
-    operateCompressor = OperateCompressor
     operateArm = OperateArm
 
 
     def createObjects(self):
+        table.putBoolean('supportLeftAlliance', False)
+        table.putBoolean('supportMiddleAlliance', False)
+        table.putBoolean('supportRightAlliance', False)
+
         self.leftFront = Spark(2)
         self.leftBack = Spark(3)
         self.rightFront = Spark(0)
@@ -74,14 +73,17 @@ class MyRobot(MagicRobot):
 
         self.leftEncoder = Encoder(0, 1, False, Encoder.EncodingType.k4X)
         self.rightEncoder = Encoder(2, 3, False, Encoder.EncodingType.k4X)
-
         self.leftEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)
         self.rightEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)
 
         CameraServer.launch('vision.py:main')
 
+    def autonomous(self):
+        self.compressor.start()
+        super().autonomous()
+
     def teleopInit(self):
-        pass
+        self.compressor.start()
 
     def teleopPeriodic(self):
         if self.isSimulation():
@@ -94,15 +96,10 @@ class MyRobot(MagicRobot):
         elif self.gamepad.getRawAxis(shoulderAxisRight):
             self.operateGrabber.setGrabber(False)
 
-        if self.gamepad.getRawButton(BUTTON_A):
-            self.operateArm.setArm(True)
-        elif self.gamepad.getRawButton(BUTTON_B):
-            self.operateArm.setArm(False)
-
         if self.gamepad.getRawButton(BUTTON_L_SHOULDER):
-            self.operateCompressor.setCompressor(True)
-        if self.gamepad.getRawButton(BUTTON_R_SHOULDER):
-            self.operateCompressor.setCompressor(False)
+            self.operateArm.setArm(True)
+        elif self.gamepad.getRawButton(BUTTON_R_SHOULDER):
+            self.operateArm.setArm(False)
 
 if __name__ == '__main__':
     wpilib.run(MyRobot)

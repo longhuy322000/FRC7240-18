@@ -1,12 +1,8 @@
 from wpilib import drive, ADXRS450_Gyro, Encoder
-from magicbot import tunable
 
 class DriveTrain:
 
     myDrive = drive.DifferentialDrive
-    #reverseMyDrive = drive.DifferentialDrive
-    leftValue = tunable(0)
-    rightValue = tunable(0)
     gyro = ADXRS450_Gyro
     leftEncoder = Encoder
     rightEncoder = Encoder
@@ -25,11 +21,6 @@ class DriveTrain:
         if value < (self.CENTER + self.STICK_DEADBAND) and value > (self.CENTER - self.STICK_DEADBAND):
             return self.CENTER
         return value
-
-    def stopMotor(self):
-        self.power = 0
-        self.angle = 0
-        self.option = False
 
     def moveAngle(self, power, angle):
         self.power = -power

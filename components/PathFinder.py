@@ -8,9 +8,14 @@ from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
 
 points = {
-    'goForward': [
+    'LeftGoForward': [
         pf.Waypoint(1.5, 21, pf.d2r(0)),
         pf.Waypoint(14, 24, pf.d2r(0))
+    ],
+
+    'RightGoForward': [
+        pf.Waypoint(1.5, 6, pf.d2r(0)),
+        pf.Waypoint(14, 3, pf.d2r(0)),
     ],
 
     'PreparePortal':[
@@ -71,8 +76,9 @@ points = {
 
     'LeftSwitchRight2': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(11, 0, pf.d2r(0)),
-        pf.Waypoint(13.2, -2.5, pf.d2r(-90))
+        pf.Waypoint(4, 0, pf.d2r(0)),
+        pf.Waypoint(9, 0, pf.d2r(0)),
+        pf.Waypoint(10.55, -2, pf.d2r(-90))
     ],
 
     'LeftSwitchBack': [
@@ -83,13 +89,13 @@ points = {
 
     'TakeCubeLeftSwitch': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(3.3, 2.5, pf.d2r(0))
+        pf.Waypoint(3.3, 2.3, pf.d2r(0))
     ],
 
     'RightSwitchRight': [
         pf.Waypoint(1.5, 6, pf.d2r(0)),
         pf.Waypoint(10, 3, pf.d2r(0)),
-        pf.Waypoint(14, 5.7, pf.d2r(90))
+        pf.Waypoint(14, 5.6, pf.d2r(90))
     ],
 
     'RightSwitchBack': [
@@ -100,21 +106,21 @@ points = {
 
     'TakeCubeRightSwitch': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(3.3, -2.3, pf.d2r(0))
-
+        pf.Waypoint(3.1, -2.3, pf.d2r(0))
     ],
 
     'RightSwitchLeft1': [
         pf.Waypoint(3, 21, pf.d2r(0)),
         pf.Waypoint(10, 18, pf.d2r(0)),
         pf.Waypoint(17, 18, pf.d2r(0)),
-        pf.Waypoint(21, 22, pf.d2r(90))
+        pf.Waypoint(22, 22, pf.d2r(90))
     ],
 
     'RightSwitchLeft2': [
         pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(4, 0, pf.d2r(0)),
         pf.Waypoint(9, 0, pf.d2r(0)),
-        pf.Waypoint(13.5, 3.75, pf.d2r(90))
+        pf.Waypoint(10.3, 1.5, pf.d2r(90))
     ],
 }
 
@@ -215,9 +221,7 @@ class PathFinder:
 
         gyro_heading = -self.gyro.getAngle()
         desired_heading = pf.r2d(self.left.getHeading())
-
         angleDifference = pf.boundHalfDegrees(desired_heading - gyro_heading)
-        #turn = 0.8 * (-1.0/80.0) * angleDifference
         turn = current_gp * angleDifference + (self.gd *
                 ((angleDifference - self.angle_error) / self.dt))
         self.angle_error = angleDifference
@@ -229,7 +233,7 @@ class PathFinder:
             self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
 
         if self.left.isFinished() or self.right.isFinished():
-            if abs(pf.boundHalfDegrees(angleDifference)) > 1.5:
+            if abs(pf.boundHalfDegrees(angleDifference)) > 0.5:
                 #print(desired_heading, gyro_heading, turn, angleDifference)
                 if self.location == 'MiddleExtraRightCube':
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(desired_heading))
@@ -237,8 +241,6 @@ class PathFinder:
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(-desired_heading))
             else:
                 self.running = False
-
-        #print(powerLeft, powerRight, turn)
         print(desired_heading, gyro_heading, turn, angleDifference)
 
     def on_disable(self):

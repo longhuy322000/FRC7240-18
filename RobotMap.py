@@ -3,7 +3,7 @@ Width_Base = 1.75
 
 #PathFinder generate
 dt = 0.02
-max_velocity = 6.0 #4.0
+max_velocity = 5.0 #4.0
 max_acceleration = 1.62 #1.62
 max_jerk = 60
 

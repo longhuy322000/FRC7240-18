@@ -34,9 +34,13 @@ class MiddlePathFinder(AutonomousStateMachine):
         self.operateGrabber.setGrabber(False)
         self.operateArm.setArm(False)
 
-    @timed_state(duration=0.2, next_state='goToSwitch')
+    @timed_state(duration=0.2, next_state='liftArm')
     def closeGrabber(self):
         self.operateGrabber.setGrabber(True)
+
+    @timed_state(duration=0.2, next_state='goToSwitch')
+    def liftArm(self):
+        self.operateArm.setArm(True)
 
     @state
     def goToSwitch(self, initial_call):
@@ -46,7 +50,17 @@ class MiddlePathFinder(AutonomousStateMachine):
             else:
                 self.pathFinder.setTrajectory('MiddleToRightSwitch', False)
         if not self.pathFinder.running:
-            self.next_state('backToCube')
+            self.next_state('dropCubeToSwitch')
+
+    @timed_state(duration=0.75, next_state='liftArmOutSwitch')
+    def dropCubeToSwitch(self):
+        self.operateArm.setArm(False)
+        self.operateGrabber.setGrabber(False)
+
+    @timed_state(duration=0.2, next_state='backToCube')
+    def liftArmOutSwitch(self):
+        self.operateArm.setArm(True)
+        self.operateGrabber.setGrabber(True)
 
     @state
     def backToCube(self, initial_call):

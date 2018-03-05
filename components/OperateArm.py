@@ -5,7 +5,7 @@ class OperateArm:
     armSolenoid = DoubleSolenoid
 
     def __init__(self):
-        self.option = -1
+        self.option = False
 
     def setArm(self, option):
         self.option = option
