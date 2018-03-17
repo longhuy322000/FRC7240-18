@@ -10,8 +10,6 @@ from components.OperateArm import OperateArm
 import math, RobotMap
 from networktables import NetworkTables
 
-table = NetworkTables.getTable('SmartDashboard')
-
 # Gamepad Axis
 leftStick_X = 0
 leftStick_Y = 1
@@ -45,9 +43,10 @@ class MyRobot(MagicRobot):
 
 
     def createObjects(self):
-        table.putBoolean('supportLeftAlliance', False)
-        table.putBoolean('supportMiddleAlliance', False)
-        table.putBoolean('supportRightAlliance', False)
+        self.table = NetworkTables.getTable('SmartDashboard')
+        self.table.putBoolean('supportLeftAlliance', False)
+        self.table.putBoolean('supportMiddleAlliance', False)
+        self.table.putBoolean('supportRightAlliance', False)
 
         self.leftFront = Spark(2)
         self.leftBack = Spark(3)
@@ -89,14 +88,14 @@ class MyRobot(MagicRobot):
         if self.isSimulation():
             self.driveTrain.moveAuto(self.gamepad.getY(), self.gamepad.getX())
         else:
-            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
+            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y) * (2/3), self.gamepad.getRawAxis(rightStick_Y)*2/3)
 
         if self.gamepad.getRawAxis(shoulderAxisLeft):
             self.operateGrabber.setGrabber(True)
-        elif self.gamepad.getRawAxis(shoulderAxisRight):
+        elif self.gamepad.getRawButton(BUTTON_L_SHOULDER):
             self.operateGrabber.setGrabber(False)
 
-        if self.gamepad.getRawButton(BUTTON_L_SHOULDER):
+        if self.gamepad.getRawAxis(shoulderAxisRight):
             self.operateArm.setArm(True)
         elif self.gamepad.getRawButton(BUTTON_R_SHOULDER):
             self.operateArm.setArm(False)

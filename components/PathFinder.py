@@ -7,90 +7,86 @@ import RobotMap, pickle, os.path
 from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
 
+
+'''MiddleBackLeftCube': [
+    pf.Waypoint(0, 0, pf.d2r(0)),
+    pf.Waypoint(6, 5, pf.d2r(0))
+],
+
+'MiddleBackRightCube': [
+    pf.Waypoint(0, 0, pf.d2r(0)),
+    pf.Waypoint(6, -4.4, pf.d2r(0))
+],
+
+'MiddleBackToPortal': [
+    pf.Waypoint(0, 0, pf.d2r(0)),
+    pf.Waypoint(5, -2.5, pf.d2r(0))
+],
+
+'MiddleTakeCube': [
+    pf.Waypoint(4, 13, pf.d2r(0)),
+    pf.Waypoint(7, 13.3, pf.d2r(0))
+],
+
+'LeftSwitchLeft': [
+    pf.Waypoint(1.5, 21, pf.d2r(0)),
+    pf.Waypoint(10, 24, pf.d2r(0)),
+    pf.Waypoint(14, 21.3, pf.d2r(-90))
+],
+
+'LeftSwitchRight1': [
+    pf.Waypoint(3, 21, pf.d2r(0)),
+    pf.Waypoint(10, 24, pf.d2r(0)),
+    pf.Waypoint(17, 24, pf.d2r(0)),
+    pf.Waypoint(22, 20, pf.d2r(-90))
+],
+
+'LeftSwitchRight2': [
+    pf.Waypoint(0, 0, pf.d2r(0)),
+    pf.Waypoint(4, 0, pf.d2r(0)),
+    pf.Waypoint(9, 0, pf.d2r(0)),
+    pf.Waypoint(10.4, -2.2, pf.d2r(-90))
+],
+
+'LeftSwitchBack': [
+    pf.Waypoint(0, 0, pf.d2r(0)),
+    pf.Waypoint(2.5, -2.5, pf.d2r(-90)),
+    pf.Waypoint(-0.5, -7, pf.d2r(-90))
+],
+
+'TakeCubeLeftSwitch': [
+    pf.Waypoint(0, 0, pf.d2r(0)),
+    pf.Waypoint(3.3, 2.3, pf.d2r(0))
+],
+
+],
+
+'RightSwitchBack': [
+    pf.Waypoint(0, 0, pf.d2r(0)),
+    pf.Waypoint(2.5, 2.5, pf.d2r(-90)),
+    pf.Waypoint(-0.5, 7, pf.d2r(-90))
+],
+
+'TakeCubeRightSwitch': [
+    pf.Waypoint(0, 0, pf.d2r(0)),
+    pf.Waypoint(3.1, -2.3, pf.d2r(0))
+],
+
+'RightSwitchLeft1': [
+    pf.Waypoint(3, 21, pf.d2r(0)),
+    pf.Waypoint(10, 18, pf.d2r(0)),
+    pf.Waypoint(17, 18, pf.d2r(0)),
+    pf.Waypoint(22, 22, pf.d2r(90))
+],
+
+'RightSwitchLeft2': [
+    pf.Waypoint(0, 0, pf.d2r(0)),
+    pf.Waypoint(4, 0, pf.d2r(0)),
+    pf.Waypoint(9, 0, pf.d2r(0)),
+    pf.Waypoint(10.3, 2.2, pf.d2r(90))
+],
+'''
 points = {
-    'LeftGoForward': [
-        pf.Waypoint(1.5, 21, pf.d2r(0)),
-        pf.Waypoint(14, 24, pf.d2r(0))
-    ],
-
-    'RightGoForward': [
-        pf.Waypoint(1.5, 6, pf.d2r(0)),
-        pf.Waypoint(14, 3, pf.d2r(0)),
-    ],
-
-    'PreparePortal':[
-        pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(3, 13, pf.d2r(0)),
-        pf.Waypoint(6, 15.5, pf.d2r(90))
-    ],
-
-    'DropCubePortal': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(4.4, 0, pf.d2r(0))
-    ],
-
-    'MiddleLeftCrossLine': [
-        pf.Waypoint(5, 0, pf.d2r(0)),
-        pf.Waypoint(10, 1.5, pf.d2r(0)),
-        pf.Waypoint(16, 1.5, pf.d2r(0))
-    ],
-
-    'MiddleRightCrossLine': [
-        pf.Waypoint(5, 0, pf.d2r(0)),
-        pf.Waypoint(10, -1.5, pf.d2r(0)),
-        pf.Waypoint(16, -1.5, pf.d2r(0))
-    ],
-
-    'MiddleBackLeftSwitch': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(5, -6, pf.d2r(0))
-    ],
-
-    'MiddleBackRightSwitch': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(5, 6, pf.d2r(0))
-    ],
-
-    'MiddleToLeftSwitch': [
-        pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(10, 18, pf.d2r(0))
-    ],
-
-    'MiddleToRightSwitch': [
-        pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(10.2, 9, pf.d2r(0))
-    ],
-
-    'LeftSwitchLeft': [
-        pf.Waypoint(1.5, 21, pf.d2r(0)),
-        pf.Waypoint(10, 24, pf.d2r(0)),
-        pf.Waypoint(14, 21.3, pf.d2r(-90))
-    ],
-
-    'LeftSwitchRight1': [
-        pf.Waypoint(3, 21, pf.d2r(0)),
-        pf.Waypoint(10, 24, pf.d2r(0)),
-        pf.Waypoint(17, 24, pf.d2r(0)),
-        pf.Waypoint(22, 20, pf.d2r(-90))
-    ],
-
-    'LeftSwitchRight2': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(4, 0, pf.d2r(0)),
-        pf.Waypoint(9, 0, pf.d2r(0)),
-        pf.Waypoint(10.55, -2, pf.d2r(-90))
-    ],
-
-    'LeftSwitchBack': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(2.5, -2.5, pf.d2r(-90)),
-        pf.Waypoint(-0.5, -7, pf.d2r(-90))
-    ],
-
-    'TakeCubeLeftSwitch': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(3.3, 2.3, pf.d2r(0))
-    ],
 
     'RightSwitchRight': [
         pf.Waypoint(1.5, 6, pf.d2r(0)),
@@ -98,30 +94,15 @@ points = {
         pf.Waypoint(14, 5.6, pf.d2r(90))
     ],
 
-    'RightSwitchBack': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(2.5, 2.5, pf.d2r(-90)),
-        pf.Waypoint(-0.5, 7, pf.d2r(-90))
+    'MiddleToLeftSwitch': [
+        pf.Waypoint(1.5, 13, pf.d2r(0)),
+        pf.Waypoint(11, 18, pf.d2r(0))
     ],
 
-    'TakeCubeRightSwitch': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(3.1, -2.3, pf.d2r(0))
-    ],
-
-    'RightSwitchLeft1': [
-        pf.Waypoint(3, 21, pf.d2r(0)),
-        pf.Waypoint(10, 18, pf.d2r(0)),
-        pf.Waypoint(17, 18, pf.d2r(0)),
-        pf.Waypoint(22, 22, pf.d2r(90))
-    ],
-
-    'RightSwitchLeft2': [
-        pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(4, 0, pf.d2r(0)),
-        pf.Waypoint(9, 0, pf.d2r(0)),
-        pf.Waypoint(10.3, 1.5, pf.d2r(90))
-    ],
+    'MiddleToRightSwitch': [
+        pf.Waypoint(1.5, 13, pf.d2r(0)),
+        pf.Waypoint(11.2, 9, pf.d2r(0))
+    ]
 }
 
 pickle_file = os.path.join(os.path.dirname(__file__), 'trajectory.pickle')
@@ -228,20 +209,18 @@ class PathFinder:
 
         if self.reverse:
             self.driveTrain.movePathFinder(powerRight, powerLeft)
-            #self.driveTrain.movePathFinder(powerLeft+turn, powerRight-turn)
         else:
             self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
 
         if self.left.isFinished() or self.right.isFinished():
             if abs(pf.boundHalfDegrees(angleDifference)) > 0.5:
-                #print(desired_heading, gyro_heading, turn, angleDifference)
                 if self.location == 'MiddleExtraRightCube':
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(desired_heading))
                 else:
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(-desired_heading))
             else:
                 self.running = False
-        print(desired_heading, gyro_heading, turn, angleDifference)
+            #print(desired_heading, gyro_heading, turn, angleDifference)
 
     def on_disable(self):
         self.running = False
