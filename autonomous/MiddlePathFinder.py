@@ -27,6 +27,7 @@ class MiddlePathFinder(AutonomousStateMachine):
 
     @timed_state(duration=0.2, first=True, next_state='goToSwitch')
     def openGrabber(self, initial_call):
+        self.operateGrabber.setGrabber(True)
         self.gameData = DriverStation.getInstance().getGameSpecificMessage()
         self.supportLeftAlliance = self.table.getBoolean('supportLeftAlliance', False)
         self.supportMiddleAlliance = self.table.getBoolean('supportMiddleAlliance', False)
@@ -50,11 +51,11 @@ class MiddlePathFinder(AutonomousStateMachine):
     def dropCubeToSwitch(self):
         self.operateGrabber.setGrabber(False)
 
-    @timed_state(duration=0.4)
+    @timed_state(duration=0.4, next_state='backToCube')
     def liftArmOutSwitch(self):
         self.operateArm.setArm(True)
 
-    '''@state
+    @state
     def backToCube(self, initial_call):
         if initial_call:
             if self.gameData[0] == 'L':
@@ -63,9 +64,13 @@ class MiddlePathFinder(AutonomousStateMachine):
                 self.pathFinder.setTrajectory('MiddleBackRightCube', True)
         if not self.pathFinder.running:
             self.operateArm.setArm(False)
-            self.next_state('grabExtraCube')
+            self.next_state('lowerArm')
 
-    @state
+    @timed_state(duration=0.4)
+    def lowerArm(self):
+        self.operateArm.setArm(False)
+
+    '''@state
     def grabExtraCube(self, initial_call):
         if initial_call:
             self.pathFinder.setTrajectory('MiddleTakeCube', False)

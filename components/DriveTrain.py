@@ -16,6 +16,7 @@ class DriveTrain:
         self.option = -1
         self.angle = 0
         self.kP = 0.8
+        self.reverse = False
 
     def stickDeadband(self, value):
         if value < (self.CENTER + self.STICK_DEADBAND) and value > (self.CENTER - self.STICK_DEADBAND):
@@ -41,6 +42,9 @@ class DriveTrain:
         self.powerLeft = self.stickDeadband(powerLeft)
         self.powerRight = self.stickDeadband(powerRight)
         self.option = True
+
+    def setReverse(self):
+        self.reverse = True
 
     def execute(self):
         if not self.option:

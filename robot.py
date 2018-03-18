@@ -77,6 +77,8 @@ class MyRobot(MagicRobot):
 
         CameraServer.launch('vision.py:main')
 
+        self.boost = False
+
     def autonomous(self):
         self.compressor.start()
         super().autonomous()
@@ -85,10 +87,13 @@ class MyRobot(MagicRobot):
         self.compressor.start()
 
     def teleopPeriodic(self):
-        if self.isSimulation():
-            self.driveTrain.moveAuto(self.gamepad.getY(), self.gamepad.getX())
+        if self.gamepad.getRawButtonPressed(BUTTON_B):
+            self.boost = not self.boost
+
+        if not self.boost:
+            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y) * (7/10), self.gamepad.getRawAxis(rightStick_Y)*7/10)
         else:
-            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y) * (2/3), self.gamepad.getRawAxis(rightStick_Y)*2/3)
+            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
 
         if self.gamepad.getRawAxis(shoulderAxisLeft):
             self.operateGrabber.setGrabber(True)
@@ -99,6 +104,7 @@ class MyRobot(MagicRobot):
             self.operateArm.setArm(True)
         elif self.gamepad.getRawButton(BUTTON_R_SHOULDER):
             self.operateArm.setArm(False)
+
 
 if __name__ == '__main__':
     wpilib.run(MyRobot)

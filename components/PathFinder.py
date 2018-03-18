@@ -8,15 +8,7 @@ from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
 
 
-'''MiddleBackLeftCube': [
-    pf.Waypoint(0, 0, pf.d2r(0)),
-    pf.Waypoint(6, 5, pf.d2r(0))
-],
-
-'MiddleBackRightCube': [
-    pf.Waypoint(0, 0, pf.d2r(0)),
-    pf.Waypoint(6, -4.4, pf.d2r(0))
-],
+'''
 
 'MiddleBackToPortal': [
     pf.Waypoint(0, 0, pf.d2r(0)),
@@ -26,12 +18,6 @@ from components.OperateGrabber import OperateGrabber
 'MiddleTakeCube': [
     pf.Waypoint(4, 13, pf.d2r(0)),
     pf.Waypoint(7, 13.3, pf.d2r(0))
-],
-
-'LeftSwitchLeft': [
-    pf.Waypoint(1.5, 21, pf.d2r(0)),
-    pf.Waypoint(10, 24, pf.d2r(0)),
-    pf.Waypoint(14, 21.3, pf.d2r(-90))
 ],
 
 'LeftSwitchRight1': [
@@ -88,20 +74,46 @@ from components.OperateGrabber import OperateGrabber
 '''
 points = {
 
+    'LeftSwitchLeft': [
+        pf.Waypoint(1.5, 21, pf.d2r(0)),
+        pf.Waypoint(10, 24, pf.d2r(0)),
+        pf.Waypoint(13.5, 20, pf.d2r(-90))
+    ],
+
+    'LeftGoForward': [
+         pf.Waypoint(1.5, 21, pf.d2r(0)),
+         pf.Waypoint(14, 24, pf.d2r(0))
+     ],
+
+    'RightGoForward': [
+         pf.Waypoint(1.5, 6, pf.d2r(0)),
+         pf.Waypoint(14, 3, pf.d2r(0)),
+     ],
+
     'RightSwitchRight': [
         pf.Waypoint(1.5, 6, pf.d2r(0)),
         pf.Waypoint(10, 3, pf.d2r(0)),
-        pf.Waypoint(14, 5.6, pf.d2r(90))
+        pf.Waypoint(14, 6.5, pf.d2r(90))
     ],
 
     'MiddleToLeftSwitch': [
         pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(11, 18, pf.d2r(0))
+        pf.Waypoint(10.2, 18.5, pf.d2r(0))
     ],
 
     'MiddleToRightSwitch': [
         pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(11.2, 9, pf.d2r(0))
+        pf.Waypoint(10.2, 8.5, pf.d2r(0))
+    ],
+
+    'MiddleBackLeftCube': [
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(6, 5, pf.d2r(0))
+    ],
+
+    'MiddleBackRightCube': [
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(6, -4.4, pf.d2r(0))
     ]
 }
 
