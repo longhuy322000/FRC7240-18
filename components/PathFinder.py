@@ -29,26 +29,24 @@ points = {
         pf.Waypoint(4.4, 0, pf.d2r(0))
     ],
 
-    'MiddleLeftCrossLine': [
-        pf.Waypoint(5, 0, pf.d2r(0)),
-        pf.Waypoint(10, 1.5, pf.d2r(0)),
-        pf.Waypoint(16, 1.5, pf.d2r(0))
-    ],
-
-    'MiddleRightCrossLine': [
-        pf.Waypoint(5, 0, pf.d2r(0)),
-        pf.Waypoint(10, -1.5, pf.d2r(0)),
-        pf.Waypoint(16, -1.5, pf.d2r(0))
-    ],
-
-    'MiddleBackLeftSwitch': [
+    'MiddleBackLeftCube': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(5, -6, pf.d2r(0))
+        pf.Waypoint(6, 5, pf.d2r(0))
     ],
 
-    'MiddleBackRightSwitch': [
+    'MiddleBackRightCube': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(5, 6, pf.d2r(0))
+        pf.Waypoint(6, -4.4, pf.d2r(0))
+    ],
+
+    'MiddleBackToPortal': [
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(5, -2.5, pf.d2r(0))
+    ],
+
+    'MiddleTakeCube': [
+        pf.Waypoint(4, 13, pf.d2r(0)),
+        pf.Waypoint(7, 13.3, pf.d2r(0))
     ],
 
     'MiddleToLeftSwitch': [
@@ -78,7 +76,7 @@ points = {
         pf.Waypoint(0, 0, pf.d2r(0)),
         pf.Waypoint(4, 0, pf.d2r(0)),
         pf.Waypoint(9, 0, pf.d2r(0)),
-        pf.Waypoint(10.55, -2, pf.d2r(-90))
+        pf.Waypoint(10.4, -2.2, pf.d2r(-90))
     ],
 
     'LeftSwitchBack': [
@@ -95,7 +93,7 @@ points = {
     'RightSwitchRight': [
         pf.Waypoint(1.5, 6, pf.d2r(0)),
         pf.Waypoint(10, 3, pf.d2r(0)),
-        pf.Waypoint(14, 5.6, pf.d2r(90))
+        pf.Waypoint(14, 5.9, pf.d2r(90))
     ],
 
     'RightSwitchBack': [
@@ -120,7 +118,7 @@ points = {
         pf.Waypoint(0, 0, pf.d2r(0)),
         pf.Waypoint(4, 0, pf.d2r(0)),
         pf.Waypoint(9, 0, pf.d2r(0)),
-        pf.Waypoint(10.3, 1.5, pf.d2r(90))
+        pf.Waypoint(10.3, 2.2, pf.d2r(90))
     ],
 }
 
@@ -228,20 +226,18 @@ class PathFinder:
 
         if self.reverse:
             self.driveTrain.movePathFinder(powerRight, powerLeft)
-            #self.driveTrain.movePathFinder(powerLeft+turn, powerRight-turn)
         else:
             self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
 
         if self.left.isFinished() or self.right.isFinished():
             if abs(pf.boundHalfDegrees(angleDifference)) > 0.5:
-                #print(desired_heading, gyro_heading, turn, angleDifference)
                 if self.location == 'MiddleExtraRightCube':
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(desired_heading))
                 else:
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(-desired_heading))
             else:
                 self.running = False
-        print(desired_heading, gyro_heading, turn, angleDifference)
+            #print(desired_heading, gyro_heading, turn, angleDifference)
 
     def on_disable(self):
         self.running = False
