@@ -225,7 +225,7 @@ class PathFinder:
             self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
 
         if self.left.isFinished() or self.right.isFinished():
-            if abs(pf.boundHalfDegrees(angleDifference)) > 0.5:
+            if abs(pf.boundHalfDegrees(angleDifference)) > 5:
                 if self.location == 'MiddleExtraRightCube':
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(desired_heading))
                 else:

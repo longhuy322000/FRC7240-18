@@ -3,12 +3,13 @@ Width_Base = 1.75
 
 #PathFinder generate
 dt = 0.02
-max_velocity = 5.5 #4.0
+max_velocity = 10 #4.0
 max_acceleration = 4 #1.62
 max_jerk = 16
 
 #PathFinder configurePIDVA
-kp = 0.9
+kp = 2.0
+ # 0.9
 ki = 0.0
 kd = 0.0
 kv = 0.25

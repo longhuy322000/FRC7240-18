@@ -6,6 +6,8 @@ from components.DriveTrain import DriveTrain
 from wpilib import DriverStation, ADXRS450_Gyro
 from networktables.networktable import NetworkTable
 
+from robotpy_ext.misc.looptimer import LoopTimer
+
 class MiddlePathFinder(AutonomousStateMachine):
 
     MODE_NAME = "Middle Pathfinder"
@@ -36,10 +38,13 @@ class MiddlePathFinder(AutonomousStateMachine):
     @state
     def goToSwitch(self, initial_call):
         if initial_call:
+            self.looptimer = LoopTimer(self.logger)
+
             if self.gameData[0] == 'L':
                 self.pathFinder.setTrajectory('MiddleToLeftSwitch', False)
             else:
                 self.pathFinder.setTrajectory('MiddleToRightSwitch', False)
+        self.looptimer.measure()
         if not self.pathFinder.running:
             self.next_state('lowerArmToSwitch')
 
@@ -47,15 +52,15 @@ class MiddlePathFinder(AutonomousStateMachine):
     def lowerArmToSwitch(self):
         self.operateArm.setArm(False)
 
-    @timed_state(duration=1, next_state='liftArmOutSwitch')
+    @timed_state(duration=0.5, next_state='liftArmOutSwitch')
     def dropCubeToSwitch(self):
         self.operateGrabber.setGrabber(False)
 
-    @timed_state(duration=0.4, next_state='backToCube')
+    @state
     def liftArmOutSwitch(self):
         self.operateArm.setArm(True)
 
-    @state
+    '''@state
     def backToCube(self, initial_call):
         if initial_call:
             if self.gameData[0] == 'L':
@@ -70,7 +75,7 @@ class MiddlePathFinder(AutonomousStateMachine):
     def lowerArm(self):
         self.operateArm.setArm(False)
 
-    '''@state
+    @state
     def grabExtraCube(self, initial_call):
         if initial_call:
             self.pathFinder.setTrajectory('MiddleTakeCube', False)

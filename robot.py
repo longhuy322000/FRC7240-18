@@ -75,7 +75,7 @@ class MyRobot(MagicRobot):
         self.leftEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)
         self.rightEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)
 
-        CameraServer.launch('vision.py:main')
+        CameraServer.launch()
 
         self.boost = False
 
