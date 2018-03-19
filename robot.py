@@ -96,14 +96,14 @@ class MyRobot(MagicRobot):
             self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
 
         if self.gamepad.getRawAxis(shoulderAxisLeft):
-            self.operateGrabber.setGrabber(True)
+            self.operateGrabber.setGrabber('close')
         elif self.gamepad.getRawButton(BUTTON_L_SHOULDER):
-            self.operateGrabber.setGrabber(False)
+            self.operateGrabber.setGrabber('open')
 
-        if self.gamepad.getRawAxis(shoulderAxisRight):
-            self.operateArm.setArm(True)
-        elif self.gamepad.getRawButton(BUTTON_R_SHOULDER):
-            self.operateArm.setArm(False)
+        if self.gamepad.getRawButton(BUTTON_R_SHOULDER):
+            self.operateArm.setArm('up')
+        elif self.gamepad.getRawAxis(shoulderAxisRight):
+            self.operateArm.setArm('down')
 
 
 if __name__ == '__main__':

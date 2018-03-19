@@ -29,7 +29,8 @@ class MiddlePathFinder(AutonomousStateMachine):
 
     @timed_state(duration=0.2, first=True, next_state='goToSwitch')
     def openGrabber(self, initial_call):
-        self.operateGrabber.setGrabber(True)
+        self.operateGrabber.setGrabber('close')
+        self.operateArm.setArm('up')
         self.gameData = DriverStation.getInstance().getGameSpecificMessage()
         self.supportLeftAlliance = self.table.getBoolean('supportLeftAlliance', False)
         self.supportMiddleAlliance = self.table.getBoolean('supportMiddleAlliance', False)
@@ -50,17 +51,17 @@ class MiddlePathFinder(AutonomousStateMachine):
 
     @timed_state(duration=0.5, next_state='dropCubeToSwitch')
     def lowerArmToSwitch(self):
-        self.operateArm.setArm(False)
+        self.operateArm.setArm('down')
 
     @timed_state(duration=0.5, next_state='liftArmOutSwitch')
     def dropCubeToSwitch(self):
-        self.operateGrabber.setGrabber(False)
+        self.operateGrabber.setGrabber('open')
+
+    @timed_state(duration=0.5, next_state='backToCube')
+    def liftArmOutSwitch(self):
+        self.operateArm.setArm('up')
 
     @state
-    def liftArmOutSwitch(self):
-        self.operateArm.setArm(True)
-
-    '''@state
     def backToCube(self, initial_call):
         if initial_call:
             if self.gameData[0] == 'L':
@@ -68,12 +69,8 @@ class MiddlePathFinder(AutonomousStateMachine):
             else:
                 self.pathFinder.setTrajectory('MiddleBackRightCube', True)
         if not self.pathFinder.running:
-            self.operateArm.setArm(False)
-            self.next_state('lowerArm')
-
-    @timed_state(duration=0.4)
-    def lowerArm(self):
-        self.operateArm.setArm(False)
+            self.operateArm.setArm('down')
+            self.next_state('grabExtraCube')
 
     @state
     def grabExtraCube(self, initial_call):
@@ -82,9 +79,25 @@ class MiddlePathFinder(AutonomousStateMachine):
         if not self.pathFinder.running:
             self.next_state('grabAddCube')
 
-    @timed_state(duration=0.5, next_state='rotate180')
+    @timed_state(duration=0.5, next_state='liftCube')
     def grabAddCube(self):
-        self.operateGrabber.setGrabber(True)
+        self.operateGrabber.setGrabber('close')
+
+    @timed_state(duration=0.5)
+    def liftCube(self):
+        self.operateArm.setArm('up')
+
+    '''@timed_state(duration=2, next_state='goToSwitchAgain')
+    def backward(self):
+        self.driveTrain.moveAuto(-1, 0)
+
+    @state
+    def goToSwitchAgain(self, initial_call):
+        if initial_call:
+            if self.gameData[0] == 'L':
+                self.pathFinder.setTrajectory('MiddleToLeftSwitch', False)
+            else:
+                self.pathFinder.setTrajectory('MiddleToRightSwitch', False)
 
     @timed_state(duration=1, next_state='exchangeCube')
     def rotate180(self, initial_call):

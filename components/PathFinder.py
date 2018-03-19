@@ -15,11 +15,6 @@ from components.OperateGrabber import OperateGrabber
     pf.Waypoint(5, -2.5, pf.d2r(0))
 ],
 
-'MiddleTakeCube': [
-    pf.Waypoint(4, 13, pf.d2r(0)),
-    pf.Waypoint(7, 13.3, pf.d2r(0))
-],
-
 'LeftSwitchRight1': [
     pf.Waypoint(3, 21, pf.d2r(0)),
     pf.Waypoint(10, 24, pf.d2r(0)),
@@ -103,7 +98,7 @@ points = {
 
     'MiddleToRightSwitch': [
         pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(10.2, 8.5, pf.d2r(0))
+        pf.Waypoint(10.6, 8.5, pf.d2r(0))
     ],
 
     'MiddleBackLeftCube': [
@@ -114,7 +109,12 @@ points = {
     'MiddleBackRightCube': [
         pf.Waypoint(0, 0, pf.d2r(0)),
         pf.Waypoint(6, -4.4, pf.d2r(0))
-    ]
+    ],
+
+    'MiddleTakeCube': [
+        pf.Waypoint(4, 13, pf.d2r(0)),
+        pf.Waypoint(7, 13, pf.d2r(0))
+    ],
 }
 
 pickle_file = os.path.join(os.path.dirname(__file__), 'trajectory.pickle')
