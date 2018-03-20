@@ -159,7 +159,7 @@ class PathFinder:
         self.reverse = False
         self.location = None
 
-    def setTrajectory(self, location, reverse):
+    def setTrajectory(self, location, reverse, tm=0.0):
         self.reverse = reverse
         self.running = True
         self.angle_error = 0.0
@@ -192,11 +192,11 @@ class PathFinder:
             if renderer:
                 if self.reverse:
                     renderer.draw_pathfinder_trajectory(leftTrajectory, color='#0000ff', offset=(1,0), scale=(-1,-1))
-                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', scale=(-1,-1))
+                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', scale=(-1,-1), show_dt=1.0, dt_offset=tm)
                     renderer.draw_pathfinder_trajectory(rightTrajectory, color='#0000ff', offset=(-1,0), scale=(-1,-1))
                 else:
                     renderer.draw_pathfinder_trajectory(leftTrajectory, color='#0000ff', offset=(-1,0))
-                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00')
+                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', show_dt=1.0, dt_offset=tm)
                     renderer.draw_pathfinder_trajectory(rightTrajectory, color='#0000ff', offset=(1,0))
 
     def execute(self):

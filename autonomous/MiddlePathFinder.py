@@ -37,14 +37,14 @@ class MiddlePathFinder(AutonomousStateMachine):
         self.supportRightAlliance = self.table.getBoolean('supportRightAlliance', False)
 
     @state
-    def goToSwitch(self, initial_call):
+    def goToSwitch(self, initial_call, tm):
         if initial_call:
             self.looptimer = LoopTimer(self.logger)
 
             if self.gameData[0] == 'L':
-                self.pathFinder.setTrajectory('MiddleToLeftSwitch', False)
+                self.pathFinder.setTrajectory('MiddleToLeftSwitch', False, tm)
             else:
-                self.pathFinder.setTrajectory('MiddleToRightSwitch', False)
+                self.pathFinder.setTrajectory('MiddleToRightSwitch', False, tm)
         self.looptimer.measure()
         if not self.pathFinder.running:
             self.next_state('lowerArmToSwitch')
@@ -62,20 +62,20 @@ class MiddlePathFinder(AutonomousStateMachine):
         self.operateArm.setArm('up')
 
     @state
-    def backToCube(self, initial_call):
+    def backToCube(self, initial_call, tm):
         if initial_call:
             if self.gameData[0] == 'L':
-                self.pathFinder.setTrajectory('MiddleBackLeftCube', True)
+                self.pathFinder.setTrajectory('MiddleBackLeftCube', True, tm)
             else:
-                self.pathFinder.setTrajectory('MiddleBackRightCube', True)
+                self.pathFinder.setTrajectory('MiddleBackRightCube', True, tm)
         if not self.pathFinder.running:
             self.operateArm.setArm('down')
             self.next_state('grabExtraCube')
 
     @state
-    def grabExtraCube(self, initial_call):
+    def grabExtraCube(self, initial_call, tm):
         if initial_call:
-            self.pathFinder.setTrajectory('MiddleTakeCube', False)
+            self.pathFinder.setTrajectory('MiddleTakeCube', False, tm)
         if not self.pathFinder.running:
             self.next_state('grabAddCube')
 
