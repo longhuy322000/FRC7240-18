@@ -88,14 +88,14 @@ class MyRobot(MagicRobot):
         if self.isSimulation():
             self.driveTrain.moveAuto(self.gamepad.getY(), self.gamepad.getX())
         else:
-            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
+            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y) * (2/3), self.gamepad.getRawAxis(rightStick_Y)*2/3)
 
         if self.gamepad.getRawAxis(shoulderAxisLeft):
             self.operateGrabber.setGrabber(True)
-        elif self.gamepad.getRawAxis(shoulderAxisRight):
+        elif self.gamepad.getRawButton(BUTTON_L_SHOULDER):
             self.operateGrabber.setGrabber(False)
 
-        if self.gamepad.getRawButton(BUTTON_L_SHOULDER):
+        if self.gamepad.getRawAxis(shoulderAxisRight):
             self.operateArm.setArm(True)
         elif self.gamepad.getRawButton(BUTTON_R_SHOULDER):
             self.operateArm.setArm(False)
