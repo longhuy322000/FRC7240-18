@@ -75,7 +75,9 @@ class MyRobot(MagicRobot):
         self.leftEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)
         self.rightEncoder.setDistancePerPulse((1/360.0)*RobotMap.WHEEL_DIAMETER*math.pi)
 
-        CameraServer.launch('vision.py:main')
+        CameraServer.launch()
+
+        self.boost = False
 
     def autonomous(self):
         self.compressor.start()
@@ -85,20 +87,24 @@ class MyRobot(MagicRobot):
         self.compressor.start()
 
     def teleopPeriodic(self):
-        if self.isSimulation():
-            self.driveTrain.moveAuto(self.gamepad.getY(), self.gamepad.getX())
+        if self.gamepad.getRawButtonPressed(BUTTON_B):
+            self.boost = not self.boost
+
+        if not self.boost:
+            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y) * (7/10), self.gamepad.getRawAxis(rightStick_Y)*7/10)
         else:
-            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y) * (2/3), self.gamepad.getRawAxis(rightStick_Y)*2/3)
+            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
 
         if self.gamepad.getRawAxis(shoulderAxisLeft):
-            self.operateGrabber.setGrabber(True)
+            self.operateGrabber.setGrabber('close')
         elif self.gamepad.getRawButton(BUTTON_L_SHOULDER):
-            self.operateGrabber.setGrabber(False)
+            self.operateGrabber.setGrabber('open')
 
-        if self.gamepad.getRawAxis(shoulderAxisRight):
-            self.operateArm.setArm(True)
-        elif self.gamepad.getRawButton(BUTTON_R_SHOULDER):
-            self.operateArm.setArm(False)
+        if self.gamepad.getRawButton(BUTTON_R_SHOULDER):
+            self.operateArm.setArm('up')
+        elif self.gamepad.getRawAxis(shoulderAxisRight):
+            self.operateArm.setArm('down')
+
 
 if __name__ == '__main__':
     wpilib.run(MyRobot)

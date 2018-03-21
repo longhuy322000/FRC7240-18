@@ -25,34 +25,41 @@ class LeftPathFinder(AutonomousStateMachine):
 
     @state(first=True)
     def startAutonomous(self):
+        self.operateGrabber.setGrabber(True)
         self.gameData = DriverStation.getInstance().getGameSpecificMessage()
         self.supportLeftAlliance = self.table.getBoolean('supportLeftAlliance', False)
         self.supportMiddleAlliance = self.table.getBoolean('supportMiddleAlliance', False)
         self.supportRightAlliance = self.table.getBoolean('supportRightAlliance', False)
-        self.operateGrabber.setGrabber(True)
-        '''if self.gameData[0] == 'R':
-            self.next_state('forward')
+        if self.gameData[0] == 'R':
+            self.next_state('goForward')
         else:
             self.next_state('goToSwitch')
-    @timed_state(duration=5)
-    def forward(self):
-        self.driveTrain.moveAuto(0.5, 0)
+
+    @state
+    def goForward(self, initial_call):
+        if initial_call:
+            self.pathFinder.setTrajectory('LeftGoForward', False)
+
     @state
     def goToSwitch(self, initial_call):
         if initial_call:
             self.pathFinder.setTrajectory('LeftSwitchLeft', False)
         if not self.pathFinder.running:
             self.next_state('lowerArmToSwitch')
+
     @timed_state(duration=0.3, next_state='dropCube')
     def lowerArmToSwitch(self):
         self.operateArm.setArm(False)
+        
     @timed_state(duration=0.3, next_state='liftArmOutSwitch')
     def dropCube(self):
         self.operateGrabber.setGrabber(False)
-    @timed_state(duration=0.2, next_state='readyForScale')
+
+    @timed_state(duration=0.2)
     def liftArmOutSwitch(self):
         self.operateArm.setArm(True)
-    @state
+
+    '''@state
     def readyForScale(self, initial_call):
         if initial_call:
             self.pathFinder.setTrajectory('LeftSwitchBack', True)

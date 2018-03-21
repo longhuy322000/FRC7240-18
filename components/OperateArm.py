@@ -5,13 +5,13 @@ class OperateArm:
     armSolenoid = DoubleSolenoid
 
     def __init__(self):
-        self.option = False
+        self.option = 'up'
 
     def setArm(self, option):
         self.option = option
 
     def execute(self):
-        if self.option:
-            self.armSolenoid.set(DoubleSolenoid.Value.kForward)
-        else:
+        if self.option == 'up':
             self.armSolenoid.set(DoubleSolenoid.Value.kReverse)
+        else:
+            self.armSolenoid.set(DoubleSolenoid.Value.kForward)

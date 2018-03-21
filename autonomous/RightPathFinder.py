@@ -33,18 +33,33 @@ class RightPathFinder(AutonomousStateMachine):
         self.supportRightAlliance = self.table.getBoolean('supportRightAlliance', False)
         self.operateGrabber.setGrabber(True)
         if self.gameData[0] == 'R':
-            '''if self.supportLeftAlliance:
-                self.next_state('supportSwitchAlliance1')
-            else:
-                self.next_state('crossAutoLine')
-        else:'''
             self.next_state('goToSwitch')
         else:
-            self.next_state('forward')
+            self.next_state('goForward')
 
     @timed_state(duration=5)
-    def forward(self):
-        self.driveTrain.moveAuto(0.5, 0)
+    def goForward(self, initial_call):
+        if initial_call:
+            self.pathFinder.setTrajectory('RightGoForward', False)
+
+    @state
+    def goToSwitch(self, initial_call):
+        if initial_call:
+            self.pathFinder.setTrajectory('RightSwitchRight', False)
+        if not self.pathFinder.running:
+            self.next_state('lowerArmToSwitch')
+
+    @timed_state(duration=0.3, next_state='dropCube')
+    def lowerArmToSwitch(self):
+        self.operateArm.setArm(False)
+
+    @timed_state(duration=0.3, next_state='liftArmOutSwitch')
+    def dropCube(self):
+        self.operateGrabber.setGrabber(False)
+
+    @timed_state(duration=0.2)
+    def liftArmOutSwitch(self):
+        self.operateArm.setArm(True)
 
     '''@state
     def supportSwitchAlliance1(self, initial_call):
@@ -77,25 +92,6 @@ class RightPathFinder(AutonomousStateMachine):
     def crossAutoLine(self, initial_call):
         if initial_call:
             self.pathFinder.setTrajectory('RightGoForward', False)'''
-
-    @state
-    def goToSwitch(self, initial_call):
-        if initial_call:
-            self.pathFinder.setTrajectory('RightSwitchRight', False)
-        if not self.pathFinder.running:
-            self.next_state('lowerArmToSwitch')
-
-    @timed_state(duration=0.3, next_state='dropCube')
-    def lowerArmToSwitch(self):
-        self.operateArm.setArm(False)
-
-    @timed_state(duration=0.3, next_state='liftArmOutSwitch')
-    def dropCube(self):
-        self.operateGrabber.setGrabber(False)
-
-    @timed_state(duration=0.2, next_state='readyForScale')
-    def liftArmOutSwitch(self):
-        self.operateArm.setArm(True)
 
     '''@state
     def readyForScale(self, initial_call):

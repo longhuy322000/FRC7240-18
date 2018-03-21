@@ -8,27 +8,13 @@ from components.OperateArm import OperateArm
 from components.OperateGrabber import OperateGrabber
 
 
-'''MiddleBackLeftCube': [
-    pf.Waypoint(0, 0, pf.d2r(0)),
-    pf.Waypoint(6, 5, pf.d2r(0))
-],
-'MiddleBackRightCube': [
-    pf.Waypoint(0, 0, pf.d2r(0)),
-    pf.Waypoint(6, -4.4, pf.d2r(0))
-],
+'''
+
 'MiddleBackToPortal': [
     pf.Waypoint(0, 0, pf.d2r(0)),
     pf.Waypoint(5, -2.5, pf.d2r(0))
 ],
-'MiddleTakeCube': [
-    pf.Waypoint(4, 13, pf.d2r(0)),
-    pf.Waypoint(7, 13.3, pf.d2r(0))
-],
-'LeftSwitchLeft': [
-    pf.Waypoint(1.5, 21, pf.d2r(0)),
-    pf.Waypoint(10, 24, pf.d2r(0)),
-    pf.Waypoint(14, 21.3, pf.d2r(-90))
-],
+
 'LeftSwitchRight1': [
     pf.Waypoint(3, 21, pf.d2r(0)),
     pf.Waypoint(10, 24, pf.d2r(0)),
@@ -75,21 +61,52 @@ from components.OperateGrabber import OperateGrabber
 '''
 points = {
 
+    'LeftSwitchLeft': [
+        pf.Waypoint(1.5, 21, pf.d2r(0)),
+        pf.Waypoint(10, 24, pf.d2r(0)),
+        pf.Waypoint(13.5, 20, pf.d2r(-90))
+    ],
+
+    'LeftGoForward': [
+         pf.Waypoint(1.5, 21, pf.d2r(0)),
+         pf.Waypoint(14, 24, pf.d2r(0))
+     ],
+
+    'RightGoForward': [
+         pf.Waypoint(1.5, 6, pf.d2r(0)),
+         pf.Waypoint(14, 3, pf.d2r(0)),
+     ],
+
     'RightSwitchRight': [
         pf.Waypoint(1.5, 6, pf.d2r(0)),
         pf.Waypoint(10, 3, pf.d2r(0)),
-        pf.Waypoint(14, 5.6, pf.d2r(90))
+        pf.Waypoint(14, 6.5, pf.d2r(90))
     ],
 
     'MiddleToLeftSwitch': [
         pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(11, 18, pf.d2r(0))
+        pf.Waypoint(10, 18, pf.d2r(0))
     ],
 
     'MiddleToRightSwitch': [
         pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(11.2, 9, pf.d2r(0))
-    ]
+        pf.Waypoint(10, 9, pf.d2r(0))
+    ],
+
+    'MiddleBackLeftCube': [
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(6, 5, pf.d2r(0))
+    ],
+
+    'MiddleBackRightCube': [
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(6, -3.85, pf.d2r(0))
+    ],
+
+    'MiddleTakeCube': [
+        pf.Waypoint(4, 13, pf.d2r(0)),
+        pf.Waypoint(7, 13, pf.d2r(0))
+    ],
 }
 
 pickle_file = os.path.join(os.path.dirname(__file__), 'trajectory.pickle')
@@ -134,7 +151,7 @@ class PathFinder:
         self.reverse = False
         self.location = None
 
-    def setTrajectory(self, location, reverse):
+    def setTrajectory(self, location, reverse, tm=0.0):
         self.reverse = reverse
         self.running = True
         self.angle_error = 0.0
@@ -167,11 +184,11 @@ class PathFinder:
             if renderer:
                 if self.reverse:
                     renderer.draw_pathfinder_trajectory(leftTrajectory, color='#0000ff', offset=(1,0), scale=(-1,-1))
-                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', scale=(-1,-1))
+                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', scale=(-1,-1), show_dt=1.0, dt_offset=tm)
                     renderer.draw_pathfinder_trajectory(rightTrajectory, color='#0000ff', offset=(-1,0), scale=(-1,-1))
                 else:
                     renderer.draw_pathfinder_trajectory(leftTrajectory, color='#0000ff', offset=(-1,0))
-                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00')
+                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', show_dt=1.0, dt_offset=tm)
                     renderer.draw_pathfinder_trajectory(rightTrajectory, color='#0000ff', offset=(1,0))
 
     def execute(self):
@@ -200,7 +217,7 @@ class PathFinder:
             self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
 
         if self.left.isFinished() or self.right.isFinished():
-            if abs(pf.boundHalfDegrees(angleDifference)) > 0.5:
+            if abs(pf.boundHalfDegrees(angleDifference)) > 5:
                 if self.location == 'MiddleExtraRightCube':
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(desired_heading))
                 else:
