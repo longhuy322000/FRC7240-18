@@ -50,7 +50,7 @@ class LeftPathFinder(AutonomousStateMachine):
     @timed_state(duration=0.3, next_state='dropCube')
     def lowerArmToSwitch(self):
         self.operateArm.setArm(False)
-        
+
     @timed_state(duration=0.3, next_state='liftArmOutSwitch')
     def dropCube(self):
         self.operateGrabber.setGrabber(False)
@@ -65,10 +65,12 @@ class LeftPathFinder(AutonomousStateMachine):
             self.pathFinder.setTrajectory('LeftSwitchBack', True)
         if not self.pathFinder.running:
             self.next_state('takeCubeLeftSwitch')
+
     @state
     def takeCubeLeftSwitch(self, initial_call):
         if initial_call:
             self.pathFinder.setTrajectory('TakeCubeLeftSwitch', False)
+
     @state
     def supportSwitchAlliance1(self, initial_call):
         if initial_call:
@@ -77,27 +79,34 @@ class LeftPathFinder(AutonomousStateMachine):
             self.pathFinder.setTrajectory('LeftSwitchRight1', False)
         if not self.pathFinder.running:
             self.next_state('supportSwitchAlliance2')
+
     @state
     def supportSwitchAlliance2(self, initial_call):
         if initial_call:
             self.pathFinder.setTrajectory('LeftSwitchRight2', False)
         if not self.pathFinder.running:
             self.next_state('supportLiftArm')
+
     @timed_state(duration=0.5, next_state='supportLiftArm')
     def supportcloseGrabber(self):
         self.operateGrabber.setGrabber(True)
+
     @timed_state(duration=0.3, next_state='driveToSwitch')
     def supportLiftArm(self):
         self.operateArm.setArm(True)
+
     @timed_state(duration=0.3, next_state='supportLowerArm')
     def driveToSwitch(self):
         self.driveTrain.moveAuto(1, 0)
+
     @timed_state(duration=0.5, next_state='supportDropCube')
     def supportLowerArm(self):
         self.operateArm.setArm(False)
+
     @timed_state(duration=0.3)
     def supportDropCube(self):
         self.operateGrabber.setGrabber(False)
+
     @state
     def crossAutoLine(self, initial_call):
         if initial_call:
