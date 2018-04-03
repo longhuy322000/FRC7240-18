@@ -25,11 +25,10 @@ class LeftPathFinder(AutonomousStateMachine):
 
     @state(first=True)
     def startAutonomous(self):
-        self.operateGrabber.setGrabber(True)
+        self.operateGrabber.setGrabber('close')
+        self.operateArm.setArm('up')
         self.gameData = DriverStation.getInstance().getGameSpecificMessage()
-        self.supportLeftAlliance = self.table.getBoolean('supportLeftAlliance', False)
-        self.supportMiddleAlliance = self.table.getBoolean('supportMiddleAlliance', False)
-        self.supportRightAlliance = self.table.getBoolean('supportRightAlliance', False)
+        self.supportLeftAlliance = self.table.getBoolean('supportAlliance', False)
         if self.gameData[0] == 'R':
             self.next_state('goForward')
         else:
