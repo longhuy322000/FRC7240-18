@@ -1,6 +1,7 @@
+import math
 from magicbot import tunable
 from components.DriveTrain import DriveTrain
-from wpilib import ADXRS450_Gyro, Encoder, RobotBase
+from wpilib import ADXRS450_Gyro, Encoder, RobotBase, SmartDashboard, Timer
 from robotpy_ext.common_drivers import navx
 import pathfinder as pf
 from pathfinder.followers import EncoderFollower
@@ -213,23 +214,33 @@ class PathFinder:
     def execute(self):
         if not self.running:
             return
+        
+        lSegment = self.left.getSegment()
+        rSegment = self.right.getSegment()
+        
+        l_encoder = self.leftEncoder.get()
+        r_encoder = self.rightEncoder.get()
 
         if self.reverse:
-            powerLeft = self.left.calculate(-self.rightEncoder.get())
-            powerRight = self.right.calculate(-self.leftEncoder.get())
+            powerLeft = self.left.calculate(-r_encoder)
+            powerRight = self.right.calculate(-l_encoder)
             current_gp = -self.gp
         else:
-            powerLeft = self.left.calculate(self.leftEncoder.get())
-            powerRight = self.right.calculate(self.rightEncoder.get())
+            powerLeft = self.left.calculate(l_encoder)
+            powerRight = self.right.calculate(r_encoder)
             current_gp = self.gp
 
         desired_heading = pf.r2d(self.left.getHeading())
-        turn = self.gotoAngle(desired_heading, current_gp)
+        turn, gyro_heading, angleDifference = self.gotoAngle(desired_heading, current_gp)
 
         if self.reverse:
-            self.driveTrain.movePathFinder(powerRight, powerLeft)
+            l = powerRight #??+turn
+            r = powerLeft #??-turn
         else:
-            self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
+            l = -powerLeft+turn
+            r = -powerRight-turn
+        
+        self.driveTrain.movePathFinder(l, r)
 
         if self.left.isFinished() or self.right.isFinished():
             self.running = False
@@ -240,6 +251,37 @@ class PathFinder:
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(-desired_heading))
             else:
                 self.running = False'''
+        
+        l_distance_covered = ((l_encoder - self.left.cfg.initial_position) / 360.0) * math.pi * RobotMap.WHEEL_DIAMETER
+        r_distance_covered = ((r_encoder - self.right.cfg.initial_position) / 360.0) * math.pi * RobotMap.WHEEL_DIAMETER
+        
+        # debugging
+        data = [
+            Timer.getFPGATimestamp(),
+            
+            l,
+            l_encoder,
+            l_distance_covered,
+            lSegment.position,
+            lSegment.velocity,
+            
+            r,
+            r_encoder,
+            r_distance_covered,
+            rSegment.position,
+            rSegment.velocity,
+            
+            gyro_heading,
+            desired_heading,
+            angleDifference,
+            
+            lSegment.x,
+            lSegment.y,
+            rSegment.x,
+            rSegment.y,
+        ]
+        
+        SmartDashboard.putNumberArray('pfdebug', data)
 
     def gotoAngle(self, desired_heading, current_gp):
         gyro_heading = -self.gyro.getAngle()
@@ -248,7 +290,7 @@ class PathFinder:
                 ((angleDifference - self.angle_error) / self.dt))
         self.angle_error = angleDifference
         turn = max(min(turn, self.turn_limit), -self.turn_limit)
-        return turn
+        return turn, gyro_heading, angleDifference
 
     def on_disable(self):
         self.running = False

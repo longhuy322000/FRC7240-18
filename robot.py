@@ -111,7 +111,7 @@ class MyRobot(MagicRobot):
             self.operateArm.setArm('down')
 
         if self.dothing:
-            turn = self.pathFinder.gotoAngle(self.doangle, self.pathFinder.gp)
+            turn, _, _ = self.pathFinder.gotoAngle(self.doangle, self.pathFinder.gp)
             self.driveTrain.moveAuto(0, turn)
         else:
             self.pathFinder.angle_error = 0
