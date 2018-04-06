@@ -2,7 +2,8 @@
 
 import wpilib
 from wpilib import Spark, Joystick, DoubleSolenoid, Compressor, SpeedControllerGroup, drive, CameraServer, ADXRS450_Gyro, Encoder
-from magicbot import MagicRobot
+from robotpy_ext.common_drivers import navx
+from magicbot import MagicRobot, tunable
 from components.DriveTrain import DriveTrain
 from components.OperateGrabber import OperateGrabber
 from components.PathFinder import PathFinder
@@ -41,6 +42,10 @@ class MyRobot(MagicRobot):
     operateGrabber = OperateGrabber
     operateArm = OperateArm
 
+    dothing = tunable(False)
+    doangle = tunable(0)
+    gyro_angle = tunable(0)
+
 
     def createObjects(self):
         self.table = NetworkTables.getTable('SmartDashboard')
@@ -68,7 +73,7 @@ class MyRobot(MagicRobot):
 
         self.gamepad = Joystick(0)
 
-        self.gyro = ADXRS450_Gyro()
+        self.gyro = navx.AHRS.create_spi()
 
         self.leftEncoder = Encoder(0, 1, False, Encoder.EncodingType.k4X)
         self.rightEncoder = Encoder(2, 3, False, Encoder.EncodingType.k4X)
@@ -91,7 +96,7 @@ class MyRobot(MagicRobot):
             self.boost = not self.boost
 
         if not self.boost:
-            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y) * (7/10), self.gamepad.getRawAxis(rightStick_Y)*7/10)
+            self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y) * (7.5/10), self.gamepad.getRawAxis(rightStick_Y)*7.5/10)
         else:
             self.driveTrain.moveTank(self.gamepad.getRawAxis(leftStick_Y), self.gamepad.getRawAxis(rightStick_Y))
 
@@ -104,6 +109,14 @@ class MyRobot(MagicRobot):
             self.operateArm.setArm('up')
         elif self.gamepad.getRawAxis(shoulderAxisRight):
             self.operateArm.setArm('down')
+
+        if self.dothing:
+            turn = self.pathFinder.gotoAngle(self.doangle, self.pathFinder.gp)
+            self.driveTrain.moveAuto(0, turn)
+        else:
+            self.pathFinder.angle_error = 0
+
+        self.gyro_angle = -self.gyro.getAngle()
 
 
 if __name__ == '__main__':

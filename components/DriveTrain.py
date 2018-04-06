@@ -1,9 +1,10 @@
 from wpilib import drive, ADXRS450_Gyro, Encoder
+from robotpy_ext.common_drivers import navx
 
 class DriveTrain:
 
     myDrive = drive.DifferentialDrive
-    gyro = ADXRS450_Gyro
+    gyro = navx.AHRS
     leftEncoder = Encoder
     rightEncoder = Encoder
 

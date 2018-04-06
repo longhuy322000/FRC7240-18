@@ -1,6 +1,7 @@
 from magicbot import tunable
 from components.DriveTrain import DriveTrain
 from wpilib import ADXRS450_Gyro, Encoder, RobotBase
+from robotpy_ext.common_drivers import navx
 import pathfinder as pf
 from pathfinder.followers import EncoderFollower
 import RobotMap, pickle, os.path
@@ -65,7 +66,7 @@ points = {
     'LeftSwitchLeft': [
         pf.Waypoint(1.5, 21, pf.d2r(0)),
         pf.Waypoint(10, 24, pf.d2r(0)),
-        pf.Waypoint(13.5, 20, pf.d2r(-90))
+        pf.Waypoint(13, 20.5, pf.d2r(-90))
     ],
 
     'LeftGoForward': [
@@ -73,16 +74,16 @@ points = {
          pf.Waypoint(14, 24, pf.d2r(0))
      ],
 
+    'RightSwitchRight': [
+        pf.Waypoint(1.5, 6, pf.d2r(0)),
+        pf.Waypoint(10, 3, pf.d2r(0)),
+        pf.Waypoint(13, 6.2, pf.d2r(90))
+    ],
+
     'RightGoForward': [
          pf.Waypoint(1.5, 6, pf.d2r(0)),
          pf.Waypoint(14, 3, pf.d2r(0)),
      ],
-
-    'RightSwitchRight': [
-        pf.Waypoint(1.5, 6, pf.d2r(0)),
-        pf.Waypoint(10, 3, pf.d2r(0)),
-        pf.Waypoint(14, 6.5, pf.d2r(90))
-    ],
 
     'MiddleToLeftSwitch': [
         pf.Waypoint(1.5, 13, pf.d2r(0)),
@@ -101,7 +102,7 @@ points = {
 
     'MiddleBackRightCube': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(6, -4.4, pf.d2r(0))
+        pf.Waypoint(6, -4.2, pf.d2r(0))
     ],
 
     'MiddleTakeCube': [
@@ -110,9 +111,19 @@ points = {
     ],
 
     'MiddleBackToSwitch': [
-        pf.Waypoint(7, 13, pf.d2r(0)),
-        pf.Waypoint(4, 13, pf.d2r(0))
-    ]
+        pf.Waypoint(0, 0, pf.d2r(0)),
+        pf.Waypoint(3, 0, pf.d2r(0))
+    ],
+
+    'MiddleToLeftSwitchAgain': [
+        pf.Waypoint(4.5, 13.5, pf.d2r(0)),
+        pf.Waypoint(10.5, 18.5, pf.d2r(0))
+    ],
+
+    'MiddleToRightSwitchAgain': [
+        pf.Waypoint(4.5, 13.5, pf.d2r(0)),
+        pf.Waypoint(10.5, 8.5, pf.d2r(0))
+    ],
 }
 
 pickle_file = os.path.join(os.path.dirname(__file__), 'trajectory.pickle')
@@ -131,7 +142,7 @@ with open(pickle_file, 'rb') as f:
 class PathFinder:
 
     driveTrain = DriveTrain
-    gyro = ADXRS450_Gyro
+    gyro = navx.AHRS
     leftEncoder = Encoder
     rightEncoder = Encoder
     operateArm = OperateArm
@@ -149,6 +160,8 @@ class PathFinder:
     max_acceleration = tunable(RobotMap.max_acceleration)
     max_jerk = tunable(RobotMap.max_jerk)
 
+    turn_limit = tunable(0.6)
+
     active = tunable(0)
 
     def __init__(self):
@@ -157,7 +170,7 @@ class PathFinder:
         self.reverse = False
         self.location = None
 
-    def setTrajectory(self, location, reverse):
+    def setTrajectory(self, location, reverse, tm=0.0):
         self.reverse = reverse
         self.running = True
         self.angle_error = 0.0
@@ -190,11 +203,11 @@ class PathFinder:
             if renderer:
                 if self.reverse:
                     renderer.draw_pathfinder_trajectory(leftTrajectory, color='#0000ff', offset=(1,0), scale=(-1,-1))
-                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', scale=(-1,-1))
+                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', scale=(-1,-1), show_dt=1.0, dt_offset=tm)
                     renderer.draw_pathfinder_trajectory(rightTrajectory, color='#0000ff', offset=(-1,0), scale=(-1,-1))
                 else:
                     renderer.draw_pathfinder_trajectory(leftTrajectory, color='#0000ff', offset=(-1,0))
-                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00')
+                    renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', show_dt=1.0, dt_offset=tm)
                     renderer.draw_pathfinder_trajectory(rightTrajectory, color='#0000ff', offset=(1,0))
 
     def execute(self):
@@ -210,12 +223,8 @@ class PathFinder:
             powerRight = self.right.calculate(self.rightEncoder.get())
             current_gp = self.gp
 
-        gyro_heading = -self.gyro.getAngle()
         desired_heading = pf.r2d(self.left.getHeading())
-        angleDifference = pf.boundHalfDegrees(desired_heading - gyro_heading)
-        turn = current_gp * angleDifference + (self.gd *
-                ((angleDifference - self.angle_error) / self.dt))
-        self.angle_error = angleDifference
+        turn = self.gotoAngle(desired_heading, current_gp)
 
         if self.reverse:
             self.driveTrain.movePathFinder(powerRight, powerLeft)
@@ -223,14 +232,23 @@ class PathFinder:
             self.driveTrain.movePathFinder(-powerLeft+turn, -powerRight-turn)
 
         if self.left.isFinished() or self.right.isFinished():
-            if abs(pf.boundHalfDegrees(angleDifference)) > 5:
+            self.running = False
+            '''if abs(pf.boundHalfDegrees(angleDifference)) > 5:
                 if self.location == 'MiddleExtraRightCube':
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(desired_heading))
                 else:
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(-desired_heading))
             else:
-                self.running = False
-            #print(desired_heading, gyro_heading, turn, angleDifference)
+                self.running = False'''
+
+    def gotoAngle(self, desired_heading, current_gp):
+        gyro_heading = -self.gyro.getAngle()
+        angleDifference = pf.boundHalfDegrees(desired_heading - gyro_heading)
+        turn = self.gp * angleDifference + (self.gd *
+                ((angleDifference - self.angle_error) / self.dt))
+        self.angle_error = angleDifference
+        turn = max(min(turn, self.turn_limit), -self.turn_limit)
+        return turn
 
     def on_disable(self):
         self.running = False
