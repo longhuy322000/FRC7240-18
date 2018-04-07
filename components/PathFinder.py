@@ -103,7 +103,7 @@ points = {
 
     'MiddleBackRightCube': [
         pf.Waypoint(0, 0, pf.d2r(0)),
-        pf.Waypoint(6, -4.2, pf.d2r(0))
+        pf.Waypoint(6, -5, pf.d2r(0))
     ],
 
     'MiddleTakeCube': [
@@ -118,12 +118,12 @@ points = {
 
     'MiddleToLeftSwitchAgain': [
         pf.Waypoint(4.5, 13.5, pf.d2r(0)),
-        pf.Waypoint(10.5, 18.5, pf.d2r(0))
+        pf.Waypoint(10.8, 18.5, pf.d2r(0))
     ],
 
     'MiddleToRightSwitchAgain': [
         pf.Waypoint(4.5, 13.5, pf.d2r(0)),
-        pf.Waypoint(10.5, 8.5, pf.d2r(0))
+        pf.Waypoint(10.8, 8.5, pf.d2r(0))
     ],
 }
 
@@ -177,6 +177,8 @@ class PathFinder:
         self.angle_error = 0.0
         self.location = location
 
+        self.logger.info("setTrajectory: %s %s", location, reverse)
+
         modifier = pf.modifiers.TankModifier(points[location]).modify(RobotMap.Width_Base)
 
         leftTrajectory = modifier.getLeftTrajectory()
@@ -195,6 +197,7 @@ class PathFinder:
         else:
             self.left.configureEncoder(self.leftEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
             self.right.configureEncoder(self.rightEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
+
         self.left.configurePIDVA(self.kp, self.ki, self.kd, self.kv, self.ka)
         self.right.configurePIDVA(self.kp, self.ki, self.kd, self.kv, self.ka)
 
@@ -214,10 +217,10 @@ class PathFinder:
     def execute(self):
         if not self.running:
             return
-        
+
         lSegment = self.left.getSegment()
         rSegment = self.right.getSegment()
-        
+
         l_encoder = self.leftEncoder.get()
         r_encoder = self.rightEncoder.get()
 
@@ -234,12 +237,12 @@ class PathFinder:
         turn, gyro_heading, angleDifference = self.gotoAngle(desired_heading, current_gp)
 
         if self.reverse:
-            l = powerRight #??+turn
-            r = powerLeft #??-turn
+            l = powerRight +turn
+            r = powerLeft -turn
         else:
             l = -powerLeft+turn
             r = -powerRight-turn
-        
+
         self.driveTrain.movePathFinder(l, r)
 
         if self.left.isFinished() or self.right.isFinished():
@@ -251,36 +254,36 @@ class PathFinder:
                     self.driveTrain.moveAngle(0.5, pf.boundHalfDegrees(-desired_heading))
             else:
                 self.running = False'''
-        
+
         l_distance_covered = ((l_encoder - self.left.cfg.initial_position) / 360.0) * math.pi * RobotMap.WHEEL_DIAMETER
         r_distance_covered = ((r_encoder - self.right.cfg.initial_position) / 360.0) * math.pi * RobotMap.WHEEL_DIAMETER
-        
+
         # debugging
         data = [
             Timer.getFPGATimestamp(),
-            
+
             l,
             l_encoder,
             l_distance_covered,
             lSegment.position,
             lSegment.velocity,
-            
+
             r,
             r_encoder,
             r_distance_covered,
             rSegment.position,
             rSegment.velocity,
-            
+
             gyro_heading,
             desired_heading,
             angleDifference,
-            
+
             lSegment.x,
             lSegment.y,
             rSegment.x,
             rSegment.y,
         ]
-        
+
         SmartDashboard.putNumberArray('pfdebug', data)
 
     def gotoAngle(self, desired_heading, current_gp):

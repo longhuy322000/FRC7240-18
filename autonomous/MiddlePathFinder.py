@@ -48,7 +48,7 @@ class MiddlePathFinder(AutonomousStateMachine):
         if not self.pathFinder.running:
             self.next_state('lowerArmToSwitch')
 
-    @timed_state(duration=0.3, next_state='dropCubeToSwitch')
+    @timed_state(duration=0.1, next_state='dropCubeToSwitch')
     def lowerArmToSwitch(self):
         self.operateArm.setArm('down')
 
@@ -103,7 +103,7 @@ class MiddlePathFinder(AutonomousStateMachine):
         if not self.pathFinder.running:
             self.next_state('lowerArmToSwitchAgain')
 
-    @timed_state(duration=0.3, next_state='dropCubeToSwitchAgain')
+    @timed_state(duration=0.1, next_state='dropCubeToSwitchAgain')
     def lowerArmToSwitchAgain(self):
         self.operateArm.setArm('down')
 
