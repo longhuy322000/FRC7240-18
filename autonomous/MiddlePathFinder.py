@@ -48,7 +48,7 @@ class MiddlePathFinder(AutonomousStateMachine):
         if not self.pathFinder.running:
             self.next_state('lowerArmToSwitch')
 
-    @timed_state(duration=0.1, next_state='dropCubeToSwitch')
+    @timed_state(duration=0.3, next_state='dropCubeToSwitch')
     def lowerArmToSwitch(self):
         self.operateArm.setArm('down')
 
@@ -78,20 +78,20 @@ class MiddlePathFinder(AutonomousStateMachine):
         if not self.pathFinder.running:
             self.next_state('grabAddCube')
 
-    @timed_state(duration=0.3, next_state='liftCube')
+    @timed_state(duration=0.3, next_state='backward')
     def grabAddCube(self):
         self.operateGrabber.setGrabber('close')
-
-    @timed_state(duration=0.3, next_state='backward')
-    def liftCube(self):
-        self.operateArm.setArm('up')
 
     @state
     def backward(self, initial_call):
         if initial_call:
             self.pathFinder.setTrajectory('MiddleBackToSwitch', True)
         if not self.pathFinder.running:
-            self.next_state('goToSwitchAgain')
+            self.next_state('liftCube')
+
+    @timed_state(duration=0.3, next_state='goToSwitchAgain')
+    def liftCube(self):
+        self.operateArm.setArm('up')
 
     @state
     def goToSwitchAgain(self, initial_call):
@@ -103,7 +103,7 @@ class MiddlePathFinder(AutonomousStateMachine):
         if not self.pathFinder.running:
             self.next_state('lowerArmToSwitchAgain')
 
-    @timed_state(duration=0.1, next_state='dropCubeToSwitchAgain')
+    @timed_state(duration=0.3, next_state='dropCubeToSwitchAgain')
     def lowerArmToSwitchAgain(self):
         self.operateArm.setArm('down')
 

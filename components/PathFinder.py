@@ -88,12 +88,12 @@ points = {
 
     'MiddleToLeftSwitch': [
         pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(10, 18.5, pf.d2r(0))
+        pf.Waypoint(10.5, 18.5, pf.d2r(0))
     ],
 
     'MiddleToRightSwitch': [
         pf.Waypoint(1.5, 13, pf.d2r(0)),
-        pf.Waypoint(10, 8.5, pf.d2r(0))
+        pf.Waypoint(10.5, 8.5, pf.d2r(0))
     ],
 
     'MiddleBackLeftCube': [
@@ -141,7 +141,7 @@ print("Pathfinder load")
 
 with open(pickle_file, 'rb') as f:
     points = pickle.load(f)
-    
+
 print("PathFinder transform")
 
 def _loadmod(v):
@@ -152,7 +152,7 @@ def _loadmod(v):
 
     left = EncoderFollower(leftTrajectory)
     right = EncoderFollower(rightTrajectory)
-    
+
     return left, right, leftTrajectory, rightTrajectory, modifier
 
 mods = {k: _loadmod(v) for k, v in points.items()}
@@ -197,7 +197,7 @@ class PathFinder:
         self.location = location
 
         self.logger.info("setTrajectory: %s %s", location, reverse)
-        
+
         self.left, self.right, leftTrajectory, rightTrajectory, modifier = mods[location]
 
         # modifier = pf.modifiers.TankModifier(points[location]).modify(RobotMap.Width_Base)

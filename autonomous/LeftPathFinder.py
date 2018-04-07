@@ -46,7 +46,7 @@ class LeftPathFinder(AutonomousStateMachine):
         if not self.pathFinder.running:
             self.next_state('lowerArmToSwitch')
 
-    @timed_state(duration=0.1, next_state='dropCube')
+    @timed_state(duration=0.3, next_state='dropCube')
     def lowerArmToSwitch(self):
         self.operateArm.setArm('down')
 
