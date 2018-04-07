@@ -210,7 +210,8 @@ class PathFinder:
 
         self.left.reset()
         self.right.reset()
-        self.gyro.reset()
+        self.gyro_start = self.gyro.getAngle()
+        #self.gyro.reset()
 
         if self.reverse:
             self.left.configureEncoder(-self.rightEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
@@ -308,7 +309,7 @@ class PathFinder:
         SmartDashboard.putNumberArray('pfdebug', data)
 
     def gotoAngle(self, desired_heading, current_gp):
-        gyro_heading = -self.gyro.getAngle()
+        gyro_heading = -(self.gyro.getAngle() - self.gyro_start)
         angleDifference = pf.boundHalfDegrees(desired_heading - gyro_heading)
         turn = self.gp * angleDifference + (self.gd *
                 ((angleDifference - self.angle_error) / self.dt))
