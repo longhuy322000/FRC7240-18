@@ -137,8 +137,27 @@ if RobotBase.isSimulation():
     with open(pickle_file, 'wb') as f:
         pickle.dump(points, f, pickle.HIGHEST_PROTOCOL)
 
+print("Pathfinder load")
+
 with open(pickle_file, 'rb') as f:
     points = pickle.load(f)
+    
+print("PathFinder transform")
+
+def _loadmod(v):
+    modifier = pf.modifiers.TankModifier(v).modify(RobotMap.Width_Base)
+
+    leftTrajectory = modifier.getLeftTrajectory()
+    rightTrajectory = modifier.getRightTrajectory()
+
+    left = EncoderFollower(leftTrajectory)
+    right = EncoderFollower(rightTrajectory)
+    
+    return left, right, leftTrajectory, rightTrajectory, modifier
+
+mods = {k: _loadmod(v) for k, v in points.items()}
+
+print("Transform done")
 
 class PathFinder:
 
@@ -178,18 +197,21 @@ class PathFinder:
         self.location = location
 
         self.logger.info("setTrajectory: %s %s", location, reverse)
+        
+        self.left, self.right, leftTrajectory, rightTrajectory, modifier = mods[location]
 
-        modifier = pf.modifiers.TankModifier(points[location]).modify(RobotMap.Width_Base)
-
-        leftTrajectory = modifier.getLeftTrajectory()
-        rightTrajectory = modifier.getRightTrajectory()
-
-        self.left = EncoderFollower(leftTrajectory)
-        self.right = EncoderFollower(rightTrajectory)
+        # modifier = pf.modifiers.TankModifier(points[location]).modify(RobotMap.Width_Base)
+        #
+        # leftTrajectory = modifier.getLeftTrajectory()
+        # rightTrajectory = modifier.getRightTrajectory()
+        #
+        # self.left = EncoderFollower(leftTrajectory)
+        # self.right = EncoderFollower(rightTrajectory)
 
         self.left.reset()
         self.right.reset()
-        self.gyro.reset()
+        self.gyro_start = self.gyro.getAngle()
+        #self.gyro.reset()
 
         if self.reverse:
             self.left.configureEncoder(-self.rightEncoder.get(), 360, RobotMap.WHEEL_DIAMETER)
@@ -287,7 +309,7 @@ class PathFinder:
         SmartDashboard.putNumberArray('pfdebug', data)
 
     def gotoAngle(self, desired_heading, current_gp):
-        gyro_heading = -self.gyro.getAngle()
+        gyro_heading = -(self.gyro.getAngle() - self.gyro_start)
         angleDifference = pf.boundHalfDegrees(desired_heading - gyro_heading)
         turn = self.gp * angleDifference + (self.gd *
                 ((angleDifference - self.angle_error) / self.dt))
