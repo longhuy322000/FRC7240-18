@@ -267,7 +267,19 @@ class PathFinder:
         else:
             l = -powerLeft+turn
             r = -powerRight-turn
-
+        
+        # ensure within -1..1
+        absl = abs(l)
+        absr = abs(r)
+        maxm = max(absl, absr)
+        if maxm > 1:
+            if absl > absr:
+                l = math.copysign(1, l)
+                r = math.copysign(absr/absl, r)
+            else:
+                l = math.copysign(absl/absr, l)
+                r = math.copysign(1, r)
+        
         self.driveTrain.movePathFinder(l, r)
 
         if self.left.isFinished() or self.right.isFinished():
