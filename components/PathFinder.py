@@ -248,8 +248,10 @@ class PathFinder:
         r_encoder = self.rightEncoder.get()
 
         if self.reverse:
-            powerLeft = self.left.calculate(-r_encoder)
-            powerRight = self.right.calculate(-l_encoder)
+            r_encoder = -r_encoder
+            l_encoder = -l_encoder
+            powerLeft = self.left.calculate(r_encoder)
+            powerRight = self.right.calculate(l_encoder)
             current_gp = -self.gp
         else:
             powerLeft = self.left.calculate(l_encoder)
