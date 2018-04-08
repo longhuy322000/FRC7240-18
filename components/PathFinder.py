@@ -118,12 +118,12 @@ points = {
 
     'MiddleToLeftSwitchAgain': [
         pf.Waypoint(4.5, 13.5, pf.d2r(0)),
-        pf.Waypoint(10.8, 18.5, pf.d2r(0))
+        pf.Waypoint(11.3, 18.5, pf.d2r(0))
     ],
 
     'MiddleToRightSwitchAgain': [
         pf.Waypoint(4.5, 13.5, pf.d2r(0)),
-        pf.Waypoint(10.8, 8.5, pf.d2r(0))
+        pf.Waypoint(11.3, 8.5, pf.d2r(0))
     ],
 }
 
@@ -186,6 +186,7 @@ class PathFinder:
 
     def __init__(self):
         self.angle_error = 0.0
+        self.gyro_start = 0.0
         self.running = True
         self.reverse = False
         self.location = None

@@ -83,9 +83,11 @@ class MiddlePathFinder(AutonomousStateMachine):
         self.operateGrabber.setGrabber('close')
 
     @state
-    def backward(self, initial_call):
+    def backward(self, initial_call, tm):
         if initial_call:
             self.pathFinder.setTrajectory('MiddleBackToSwitch', True)
+        if tm > 0.7:
+            self.operateArm.setArm('up')
         if not self.pathFinder.running:
             self.next_state('liftCube')
 
