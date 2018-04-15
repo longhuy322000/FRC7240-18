@@ -11,6 +11,7 @@ import threading
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
+import plot
 
 class DataLogger:
     
@@ -51,7 +52,7 @@ class DataLogger:
         elif key == '/SmartDashboard/pfdebug':
             if self.mode != 'disabled':
                 with self.lock:
-                    self.data.append(value)
+                    self.data.append(list(value))
     
     def run(self):
         
@@ -62,10 +63,12 @@ class DataLogger:
             name, data = self.queue.get()
             with open(name, 'w') as fp:
                 json.dump(data, fp)
+            
+            plot.plot_data(name, data)
 
 if __name__ == '__main__':
     
-    NetworkTables.initialize(server='10.72.40.2')
+    NetworkTables.initialize(server='localhost')
     
     log = DataLogger()
     log.run()

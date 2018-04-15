@@ -11,10 +11,7 @@ import pathfinder as pf
 
 import matplotlib.pyplot as plt
 
-if __name__ == '__main__':
-    fname = sys.argv[1]
-    with open(fname) as fp:
-        data = json.load(fp)
+def plot_data(name, data):
     
     # fix time
     offset = data[0][0]
@@ -51,7 +48,7 @@ if __name__ == '__main__':
     # 15
     # 16
     
-    plt.suptitle(fname)
+    plt.suptitle(name)
     
     plt.subplot2grid((3,1),(1,0))
     plt.plot(data[0], data[4] - data[3], data[0], data[9] - data[8])
@@ -67,3 +64,12 @@ if __name__ == '__main__':
     plt.title("Output")
     
     plt.show()
+    plt.close()
+
+
+if __name__ == '__main__':
+    fname = sys.argv[1]
+    with open(fname) as fp:
+        data = json.load(fp)
+    
+    plot_data(fname, data)
