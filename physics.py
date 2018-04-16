@@ -17,8 +17,18 @@ class PhysicsEngine(object):
         self.physics_controller = physics_controller
         self.physics_controller.add_device_gyro_channel('navxmxp_spi_4_angle')
         
+        bumper_width = 3.25
+        robot_wheelbase_in = 22
+        robot_width_in = 23 + bumper_width*2
+        robot_length_in = 32 + bumper_width*2
+        wheel_diameter = 0.5
+        
         self.drivetrain = tankmodel.TankModel.theory(motors.MOTOR_CFG_CIM,
-                                                     90, 10.71, 2, 2.0, 0.5)
+                                                     90, 10.71, 2,
+                                                     robot_wheelbase_in / 12,
+                                                     robot_width_in / 12,
+                                                     robot_length_in / 12,
+                                                     wheel_diameter)
 
     def update_sim(self, hal_data, now, tm_diff):
         '''
