@@ -21,14 +21,14 @@ class PhysicsEngine(object):
         robot_wheelbase_in = 22
         robot_width_in = 23 + bumper_width*2
         robot_length_in = 32 + bumper_width*2
-        wheel_diameter = 0.5
+        wheel_diameter_in = 6
         
         self.drivetrain = tankmodel.TankModel.theory(motors.MOTOR_CFG_CIM,
                                                      90, 10.71, 2,
-                                                     robot_wheelbase_in / 12,
-                                                     robot_width_in / 12,
-                                                     robot_length_in / 12,
-                                                     wheel_diameter)
+                                                     robot_wheelbase_in / 12.0,
+                                                     robot_width_in / 12.0,
+                                                     robot_length_in / 12.0,
+                                                     wheel_diameter_in / 12.0)
 
     def update_sim(self, hal_data, now, tm_diff):
         '''
@@ -46,9 +46,8 @@ class PhysicsEngine(object):
         #lf_motor = hal_data['pwm'][2]['value']*-1
         #rf_motor = hal_data['pwm'][0]['value']*-1
 
-        speed, rotation = self.drivetrain.get_vector(lr_motor, rr_motor, tm_diff)
-        
-        self.physics_controller.drive(speed, rotation, tm_diff)
+        x, y, angle = self.drivetrain.get_distance(lr_motor, rr_motor, tm_diff)
+        self.physics_controller.distance_drive(x, y, angle)
         
         self.left_counter = self.drivetrain.l_position / (RobotMap.WHEEL_DIAMETER * math.pi / 360)
         self.right_counter = self.drivetrain.r_position / (RobotMap.WHEEL_DIAMETER * math.pi / 360)
