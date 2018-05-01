@@ -1,4 +1,6 @@
-from pyfrc.physics import tankmodel, motors
+from pyfrc.physics import tankmodel, motor_cfgs
+from pyfrc.physics.units import units
+
 import math
 import RobotMap
 
@@ -17,18 +19,20 @@ class PhysicsEngine(object):
         self.physics_controller = physics_controller
         self.physics_controller.add_device_gyro_channel('navxmxp_spi_4_angle')
         
-        bumper_width = 3.25
-        robot_wheelbase_in = 22
-        robot_width_in = 23 + bumper_width*2
-        robot_length_in = 32 + bumper_width*2
-        wheel_diameter_in = 6
+        bumper_width = 3.25*units.inch
+        robot_wheelbase = 22*units.inch
+        robot_width = 23*units.inch + bumper_width*2
+        robot_length = 32*units.inch + bumper_width*2
+        wheel_diameter = 6*units.inch
         
-        self.drivetrain = tankmodel.TankModel.theory(motors.MOTOR_CFG_CIM,
-                                                     90, 10.71, 2,
-                                                     robot_wheelbase_in / 12.0,
-                                                     robot_width_in / 12.0,
-                                                     robot_length_in / 12.0,
-                                                     wheel_diameter_in / 12.0)
+        robot_mass = 90 * units.pounds
+        
+        self.drivetrain = tankmodel.TankModel.theory(motor_cfgs.MOTOR_CFG_CIM,
+                                                     robot_mass, 10.71, 2,
+                                                     robot_wheelbase,
+                                                     robot_width,
+                                                     robot_length,
+                                                     wheel_diameter)
 
     def update_sim(self, hal_data, now, tm_diff):
         '''
